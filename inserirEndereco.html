@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar endereço</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-custom border-bottom">
+        <div class="container-fluid">
+            <a class="navbar-brand">
+              <img class="navbar-icone rounded-circle" src="assets/images.png" alt="">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+                    
+                </ul>
+
+                <div class="dropdown d-flex align-items-center">
+                    
+                    
+                    <img src="assets/premium_photo-1689539137236-b68e436248de.jpeg" alt="Imagem" class="rounded-circle me-2" width="40" height="40">
+                    
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px;">
+                    </button>
+
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" onclick="passarIdCartao()">Meus Cartões</a></li>
+                      <li><a class="dropdown-item" onclick="passarIdEndereco()">Meus Endereços</a></li>
+                      <li><a class="dropdown-item" href="telaInicial.html">Sair</a></li>
+                  </ul>
+                </div>
+                
+            </div>
+        </div>
+    </nav>
+  
+  <div class="formbold-main-wrapper">
+    <div class="formbold-form-wrapper">
+        <img src="assets/images.png" alt="Form Image" class="formbold-img">
+
+      <form>
+        <div class="formbold-form-title">
+          <h2>Cadastro dados de endereço</h2>
+        </div>
+        <div class="formbold-mb-3">
+          <div>
+            <label for="cep" class="formbold-form-label">CEP</label>
+            <input type="text" name="cep" id="cep" class="formbold-form-input" required>
+          </div>
+        </div>
+          <div>
+            <label for="rua" class="formbold-form-label">Rua</label>
+            <input type="text" name="rua" id="rua" class="formbold-form-input" required>
+          </div>
+          <div class="formbold-input-flex">
+          <div>
+            <label for="numero" class="formbold-form-label">Número</label>
+            <input type="text" name="numero" id="numero" class="formbold-form-input" required>
+          </div>
+          <div>
+            <label for="complemento" class="formbold-form-label">Complemento</label>
+            <input type="text" name="complemento" id="complemento" class="formbold-form-input" required>
+          </div>
+        </div>
+          <div>
+            <label for="bairro" class="formbold-form-label">Bairro</label>
+            <input type="text" name="bairro" id="bairro" class="formbold-form-input" required>
+          </div>
+        <div class="formbold-input-flex">
+        <div class="formbold-mb-3">
+          <label for="cidade" class="formbold-form-label">Cidade</label>
+          <input type="text" name="cidade" id="cidade" class="formbold-form-input" required>
+        </div>
+        <div>
+            <label for="estado" class="formbold-form-label">Estado</label>
+            <select class="form-select" id="estado" required>
+                <option selected disabled>Selecione</option>
+                <option value="AC">Acre</option>
+                <option value="AL">Alagoas</option>
+                <option value="AP">Amapá</option>
+                <option value="AM">Amazonas</option>
+                <option value="BA">Bahia</option>
+                <option value="CE">Ceará</option>
+                <option value="DF">Distrito Federal</option>
+                <option value="ES">Espírito Santo</option>
+                <option value="GO">Goiás</option>
+                <option value="MA">Maranhão</option>
+                <option value="MT">Mato Grosso</option>
+                <option value="MS">Mato Grosso do Sul</option>
+                <option value="MG">Minas Gerais</option>
+                <option value="PA">Pará</option>
+                <option value="PB">Paraíba</option>
+                <option value="PR">Paraná</option>
+                <option value="PE">Pernambuco</option>
+                <option value="PI">Piauí</option>
+                <option value="RJ">Rio de Janeiro</option>
+                <option value="RN">Rio Grande do Norte</option>
+                <option value="RS">Rio Grande do Sul</option>
+                <option value="RO">Rondônia</option>
+                <option value="RR">Roraima</option>
+                <option value="SC">Santa Catarina</option>
+                <option value="SP">São Paulo</option>
+                <option value="SE">Sergipe</option>
+                <option value="TO">Tocantins</option>
+              </select>
+        </div>
+        </div>
+        <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="endereco-principal">
+            <label class="form-check-label" for="endereco-principal">Definir como endereço principal</label>
+          </div>
+        <button type="submit" class="formbold-btn" onclick="postclientes(event)">Enviar</button>
+      </form>
+    </div>
+    
+  </div>
+  
+  <script src="js/scriptInserirEnderecos.js"></script>
+</body>
+</html>
