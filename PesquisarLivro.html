@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesquisar Livro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-custom border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand">
+        <img class="navbar-icone rounded-circle" src="assets/images.png" alt="">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+          <li class="nav-item active"><a class="nav-link" href="pesquisarUsuario.html">Pesquisar Clientes</a></li>
+          <li class="nav-item active"><a class="nav-link" href="CadastroCliente.html">Inserir Clientes</a></li>
+        </ul>
+        <div class="dropdown d-flex align-items-center">
+          <img src="assets/7662778-jovem-bonito-homem-gerente-executivo-de-terno-elegante-posando-contra-fundo-cinza-gratis-foto.jpg"
+               alt="Imagem" class="rounded-circle me-2" width="40" height="40">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false" style="padding: 5px 10px;"></button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="telaInicial.html">Sair</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card p-3">
+          <h2 class="mb-3">Encontrar Livro </h2>
+          <form id="form-cliente">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Autor</label>
+              <input type="text" name="nome" id="nome" class="form-control" required>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <label for="genero" class="form-label">Categoria</label>
+                <input type="text" name="genero" id="genero" class="form-control" required>
+              </div>
+              <div class="col">
+                <label for="data-nascimento" class="form-label">Ano</label>
+                <input type="text" name="data-nascimento" id="data-nascimento" class="form-control" required>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <label for="idade" class="form-label">Título</label>
+                <input type="number" name="idade" id="idade" class="form-control" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="cpf" class="form-label">Editora</label>
+              <input type="text" name="cpf" id="cpf" class="form-control" required>
+            </div>
+            <div class="col mb-3">
+              <label for="email" class="form-label">ISBN</label>
+              <input type="email" name="email" id="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="telefone" class="form-label">Número de páginas</label>
+              <input type="text" name="telefone" id="telefone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Grupo de precificação</label>
+                <input type="text" name="telefone" id="telefone" class="form-control" required>
+              </div>
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Código de barras</label>
+                <input type="text" name="telefone" id="telefone" class="form-control" required>
+              </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Pesquisar Livro
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="card p-3">
+          <h2>Detalhes do Livro</h2>
+          <div class="table-responsive custom-scroll">
+            <table class="table table-striped" id="dataTable">
+              <thead>
+                <tr>
+                  <th>Autor</th>
+                  <th>Categoria</th>
+                  <th>Ano</th>
+                  <th>Título</th>
+                  <th>Editora</th>
+                  <th>ISBN</th>
+                  <th>Número de páginas</th>
+                  <th>Grupo de precificação</th>
+                  <th>Código de barras</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>J.R.R. Tolkien</td>
+                  <td>Fantasia, Aventura</td>
+                  <td>1954</td>
+                  <td>O Senhor dos Anéis: A Sociedade do Anel</td>
+                  <td>Martins Fontes</td>
+                  <td>978-85-336-1123-5</td>
+                  <td>432</td>
+                  <td>Médio</td>
+                  <td>9788533611235</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-success btn-sm">Editar</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
