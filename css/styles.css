@@ -292,3 +292,16 @@ body {
 .book-card img:hover {
   transform: scale(1.1);
 }
+  
+.mini-products .mini-card {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.mini-products .mini-card img {
+  max-width: 80px;
+  height: auto;
+}
+.mini-products .mini-card small {
+  display: block;
+  font-size: 0.8rem;
+}
