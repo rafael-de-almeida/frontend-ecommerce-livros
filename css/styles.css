@@ -21,7 +21,7 @@ body {
     border-radius: 3px;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
     max-width: 800px;
-    margin: 50px auto; /* Centraliza a tabela */
+    margin: 50px auto; 
     border-radius:15px ;
     
 }
@@ -241,7 +241,7 @@ body {
     height: 50px; 
   }
   .custom-scroll {
-    max-height: 600px; /* Ajuste conforme necessário */
+    max-height: 600px;
     overflow-y: auto;
 }
 .btn-primary {
@@ -261,4 +261,27 @@ body {
 .btn-success:hover {
   background-color: #44cc74!important;
   border-color: #44cc74 !important;
+}
+.formbold-input-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+}
+.book-card img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.row {
+  margin-bottom: 20px;
 }
