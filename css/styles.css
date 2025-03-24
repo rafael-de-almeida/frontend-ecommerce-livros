@@ -262,3 +262,27 @@ body {
   background-color: #44cc74!important;
   border-color: #44cc74 !important;
 }
+.formbold-input-flex {
+  display: flex;
+  justify-content: center; /* Centers items horizontally */
+  align-items: center; /* Centers items vertically */
+  gap: 10px; /* Adds spacing between buttons */
+  flex-wrap: wrap; /* Ensures buttons stay aligned if the screen is too small */
+}
+.card-title {
+  white-space: nowrap;  /* Prevents text from wrapping to the next line */
+  overflow: hidden;  /* Hides overflow text */
+  text-overflow: ellipsis;  /* Adds "..." to indicate cut-off text */
+  max-width: 100%; /* Ensures it does not exceed its container */
+  display: block; /* Ensures it behaves as a block element */
+}
+.book-card img {
+  width: 100%;  /* Ensures the image takes the full width of its container */
+  height: 400px; /* Set a fixed height */
+  object-fit: cover; /* Ensures the image fills the space while keeping proportions */
+  border-radius: 8px; /* Optional: makes the corners rounded */
+}
+.row {
+  margin-bottom: 20px; /* Adds space between rows */
+}
+
