@@ -21,7 +21,7 @@ body {
     border-radius: 3px;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
     max-width: 800px;
-    margin: 50px auto; /* Centraliza a tabela */
+    margin: 50px auto; 
     border-radius:15px ;
     
 }
@@ -241,7 +241,7 @@ body {
     height: 50px; 
   }
   .custom-scroll {
-    max-height: 600px; /* Ajuste conforme necessário */
+    max-height: 600px;
     overflow-y: auto;
 }
 .btn-primary {
@@ -264,25 +264,24 @@ body {
 }
 .formbold-input-flex {
   display: flex;
-  justify-content: center; /* Centers items horizontally */
-  align-items: center; /* Centers items vertically */
-  gap: 10px; /* Adds spacing between buttons */
-  flex-wrap: wrap; /* Ensures buttons stay aligned if the screen is too small */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .card-title {
-  white-space: nowrap;  /* Prevents text from wrapping to the next line */
-  overflow: hidden;  /* Hides overflow text */
-  text-overflow: ellipsis;  /* Adds "..." to indicate cut-off text */
-  max-width: 100%; /* Ensures it does not exceed its container */
-  display: block; /* Ensures it behaves as a block element */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 .book-card img {
-  width: 100%;  /* Ensures the image takes the full width of its container */
-  height: 400px; /* Set a fixed height */
-  object-fit: cover; /* Ensures the image fills the space while keeping proportions */
-  border-radius: 8px; /* Optional: makes the corners rounded */
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 .row {
-  margin-bottom: 20px; /* Adds space between rows */
+  margin-bottom: 20px;
 }
-
