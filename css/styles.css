@@ -78,7 +78,7 @@ body {
 .form-control{
     border-radius: 15px;
     
-    
+
     
 }
 * {
@@ -304,4 +304,31 @@ body {
 .mini-products .mini-card small {
   display: block;
   font-size: 0.8rem;
+}
+/* Estilizando o campo de quantidade para ter largura igual aos botões */
+.quantidade {
+  width: 60px; /* Garantindo que o input tenha a mesma largura que os botões */
+  height: 35px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid #000;
+  text-align: center;
+  padding: 5px;
+  border-radius: 0; /* Garantir borda reta */
+}
+
+.quantidade::-webkit-outer-spin-button,
+.quantidade::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Certificando que os botões e o campo de input tenham a mesma largura */
+.btn-qtd {
+  width: 60px; /* A largura dos botões deve ser igual à do input */
+  height: 35px; /* Ajustando a altura dos botões */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0; /* Garantindo bordas retas nos botões */
 }
