@@ -92,10 +92,44 @@
         <hr>
         <p>Produtos: R$140,46</p>
         <p>Frete:R$20,00</p>
-        <p><strong>Total: R$140,46</strong></p>
+        <p><strong>Total: R$160,46</strong></p>
       </div>
-      <button type="button" class="btn btn-success w-100">Finalizar Compra</button>
+      <button type="button" class="btn btn-success w-100" id="finalizarCompraBtn">Finalizar Compra</button>
     </form>
   </div>
+<div class="modal fade" id="statusCompraModal" tabindex="-1" aria-labelledby="statusCompraLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusCompraLabel">Status da Compra</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">
+          <span class="spinner-border text-primary" role="status"></span>
+          <br> Sua compra está em processamento...
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  document.getElementById("finalizarCompraBtn").addEventListener("click",
+   function () {
+    var modal = new bootstrap.Modal(document.getElementById("statusCompraModal"));
+    modal.show();
+    
+    
+    setTimeout(function () {
+      window.location.href = "historicoCompras.html"; 
+    }, 3000);
+  });
+</script>
+
+
 </body>
 </html>
