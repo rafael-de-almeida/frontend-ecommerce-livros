@@ -48,6 +48,7 @@
           <li>Livro: 1984 - R$ 39,90</li>
           <li>Livro: O Senhor dos Anéis - R$ 59,90</li>
         </ul>
+        <button class="btn btn-danger mt-2" onclick="pedirDevolucao(1)">Pedir Devolução</button>
       </div>
     </div>
     
@@ -76,5 +77,12 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function pedirDevolucao(pedidoId) {
+      alert(`Pedido #${pedidoId}: Solicitação de devolução enviada.`);
+      // Aqui você pode adicionar uma requisição para processar a devolução no backend
+    }
+  </script>
 </body>
 </html>
