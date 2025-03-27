@@ -77,7 +77,20 @@
                             <label for="cpf" class="form-label">Status</label>
                             <input type="text" name="cpf" id="cpf" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100" >Pesquisar Venda</button>
+                        <div class="row g-3">
+                             <div class="col-md-5">
+                                <label class="form-label">De:</label>
+                                <input type="date" class="form-control" id="startDate"> 
+                             </div>
+                        
+                        <div class="col-md-5">
+                            <label class="form-label">Até:</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-4" >Pesquisar Venda</button>
                     </form>
                 </div>
             </div>

@@ -314,7 +314,7 @@ body {
   border: 2px solid #000;
   text-align: center;
   padding: 5px;
-  border-radius: 0; /* Garantir borda reta */
+  border-radius: 0;
 }
 
 .quantidade::-webkit-outer-spin-button,
@@ -323,12 +323,41 @@ body {
   margin: 0;
 }
 
-/* Certificando que os botões e o campo de input tenham a mesma largura */
+
 .btn-qtd {
-  width: 60px; /* A largura dos botões deve ser igual à do input */
-  height: 35px; /* Ajustando a altura dos botões */
+  width: 60px; 
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0; /* Garantindo bordas retas nos botões */
+  border-radius: 0; 
+}
+
+.chat-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.chat-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-button:hover {
+  background-color: #0056b3;
+}
+
+.chat-button span {
+  font-size: 24px;
 }

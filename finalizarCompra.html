@@ -57,13 +57,18 @@
 
       <div class="mb-4">
         <h3>Forma de Pagamento</h3>
-        <select class="form-select mb-2" id="forma-pagamento-selecionada">
-          <option value="" selected>Selecione uma forma de pagamento</option>
-          <option value="cartao1">Cartão de Crédito - **** 1234</option>
-          <option value="cartao2">Cartão de Crédito - **** 5678</option>
-        </select>
-        <a href="cartoes.html" class="btn btn-link">Adicionar Novo Cartão</a>
+        <div id="cartoes-container"> 
+          <select class="form-select mb-2" id="cartao1" aria-label="Primeiro Cartão">
+            <option value="" selected>Selecione um cartão</option>
+            <option value="cartao1">Cartão de Crédito - **** 1234</option>
+            <option value="cartao2">Cartão de Crédito - **** 5678</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="button" id="adicionar-cartao">Adicionar Outro Cartão</button>
+
+        <a href="enderecos.html" class="btn btn-link">Adicionar Novo Cartão</a>
       </div>
+      
       <div class="mb-4">
         <h3>Aplicar Cupom</h3>
         <input type="text" class="form-control mb-2" id="codigo-cupom" placeholder="Digite o código do cupom">
@@ -76,60 +81,75 @@
           <div class="col-4 mini-card">
             <img src="assets/senhor dos aneis.jpeg" alt="Senhor dos Anéis" class="img-thumbnail">
             <small>Senhor dos Anéis</small>
+            <p>1</p>
             <small>R$47,40</small>
           </div>
           <div class="col-4 mini-card">
             <img src="assets/aTorredoElefante.jpeg" alt="A Torre do Elefante" class="img-thumbnail">
             <small>A Torre do Elefante</small>
+            <p>2</p>
             <small>R$55,93</small>
           </div>
           <div class="col-4 mini-card">
             <img src="assets/pricopprobre.jpeg" alt="Pai Rico, Pai Pobre" class="img-thumbnail">
             <small>Pai Rico, Pai Pobre</small>
+            <p>1</p>
             <small>R$37,13</small>
           </div>
         </div>
         <hr>
         <p>Produtos: R$140,46</p>
         <p>Frete:R$20,00</p>
+        <p>Desconto(Cupom):R$0,00</p>
         <p><strong>Total: R$160,46</strong></p>
       </div>
       <button type="button" class="btn btn-success w-100" id="finalizarCompraBtn">Finalizar Compra</button>
     </form>
   </div>
-<div class="modal fade" id="statusCompraModal" tabindex="-1" aria-labelledby="statusCompraLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="statusCompraLabel">Status da Compra</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        <p class="text-center">
-          <span class="spinner-border text-primary" role="status"></span>
-          <br> Sua compra está em processamento...
-        </p>
+
+  <div class="modal fade" id="statusCompraModal" tabindex="-1" aria-labelledby="statusCompraLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="statusCompraLabel">Status da Compra</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-center">
+            <span class="spinner-border text-primary" role="status"></span>
+            <br> Sua compra está em processamento...
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+  <script>
+    document.getElementById("finalizarCompraBtn").addEventListener("click", function () {
+      var modal = new bootstrap.Modal(document.getElementById("statusCompraModal"));
+      modal.show();
+      
+      setTimeout(function () {
+        window.location.href = "historicoCompras.html"; 
+      }, 2000);
+    });
 
+    const adicionarCartaoButton = document.getElementById('adicionar-cartao');
+    const cartoesContainer = document.getElementById('cartoes-container');
 
-
-<script>
-  document.getElementById("finalizarCompraBtn").addEventListener("click",
-   function () {
-    var modal = new bootstrap.Modal(document.getElementById("statusCompraModal"));
-    modal.show();
-    
-    
-    setTimeout(function () {
-      window.location.href = "historicoCompras.html"; 
-    }, 2000);
-  });
-</script>
-
-
+    adicionarCartaoButton.addEventListener('click', () => {
+      const novoCartaoContainer = document.createElement('div');
+      
+      novoCartaoContainer.innerHTML = `
+        <select class="form-select mb-2" aria-label="Novo Cartão">
+          <option value="" selected>Selecione um cartão</option>
+          <option value="cartao1">Cartão de Crédito - **** 1234</option>
+          <option value="cartao2">Cartão de Crédito - **** 5678</option>
+        </select>
+      `;
+      
+      cartoesContainer.appendChild(novoCartaoContainer); 
+    });
+  </script>
 </body>
 </html>
