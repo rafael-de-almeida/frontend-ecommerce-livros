@@ -1,52 +1,52 @@
+document.getElementById('formCartao').addEventListener('submit', async function(event) {
+    event.preventDefault();  // Impede o envio tradicional do formulário
+    await postCartao(event);  // Chama a função postCartao
+});
 
-
-function passarIdCartao (){
+async function postCartao(event) {
+    // Captura o ID da URL
     const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
-    window.location.href = `cartoes.html?id=${id}`
-}
-function passarIdEndereco (){
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
-    window.location.href = `enderecos.html?id=${id}`
-}
-
-async function postclientes(event) {
-    event.preventDefault();
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id'); // Tenta pegar o ID da URL
+    let id = urlParams.get('id'); 
 
     if (!id) {
-        console.log("Nenhum ID capturado na URL."); // Se não houver ID na URL, define um valor padrão
+        console.log("Nenhum ID capturado na URL."); 
+        return;
     }
 
-    console.log("ID capturado:", id);
+    console.log("ID do cliente:", id);
 
-    // Construindo a URL da API com o ID
+    // URL da API para onde os dados serão enviados
     const postapiUrl = `http://localhost:8080/site/clientes/post/cartao?id=${id}`;
-    console.log("POST URL:", postapiUrl);
+
+    // Coleta os dados do formulário
     const numero = document.getElementById('numero-cartao').value;
     const bandeira = document.getElementById('bandeira').value;
     const codigo = document.getElementById('codigo').value;
     const nome = document.getElementById('nome').value;
     const vencimento = document.getElementById('vencimento').value;
-    const status = document.getElementById('status').value;
+    const statusElement = document.getElementById('status');
+    const status = statusElement ? statusElement.value : "ativo"; 
 
-    if (!numero || !bandeira || !codigo || !nome || !vencimento || !status) {
-        alert('Please fill in all fields.');
+    // Verifica se todos os campos obrigatórios foram preenchidos
+    if (!numero || !bandeira || !codigo || !nome || !vencimento) {
+        alert('Preencha todos os campos.');
         return;
     }
 
+    // Prepara os dados para envio
     const data = JSON.stringify({
         CAR_NUMERO: numero,
         CAR_BANDEIRA: bandeira,
         CAR_CODIGO: codigo,
         CAR_NOME: nome,
         CAR_VENCIMENTO: vencimento,
-        CAR_STATUS : status,
+        CAR_STATUS: status,
     });
-    console.log('Sending data:', data);
+
+    console.log("Dados a serem enviados:", data);
+
     try {
+        // Envia a requisição para a API
         const response = await fetch(postapiUrl, {
             method: 'POST',
             headers: {
@@ -55,17 +55,18 @@ async function postclientes(event) {
             body: data
         });
 
+        const responseData = await response.json(); 
+
+        // Verifica a resposta da API
         if (response.ok) {
-            const responseData = await response.json();
-            alert('Client successfully posted!');
-            console.log('Response:', response.json());
+            alert('Cartão cadastrado com sucesso!');
+            console.log('Response:', responseData);
         } else {
-            const errorText = await response.text();
-            console.error('Error:', response.status, errorText);
-            alert('Failed to post client. Check the console for details.');
+            console.error('Erro:', response.status, responseData);
+            alert('Erro ao cadastrar o cartão.');
         }
     } catch (error) {
-        console.error('Error during POST request:', error);
-        alert('An error occurred. Please try again.');
+        console.error('Erro na requisição:', error);
+        alert('Erro inesperado. Verifique o console.');
     }
 }

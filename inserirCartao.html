@@ -47,44 +47,46 @@
     <div class="formbold-form-wrapper">
         <img src="assets/images.png" alt="Form Image" class="formbold-img">
 
-      <form>
-        <div class="formbold-form-title">
-          <h2>Cadastro dados do cartão</h2>
-        </div>
-        <div class="formbold-mb-3">
-          <div>
-            <label for="numero-cartao" class="formbold-form-label">Número do cartão</label>
-            <input type="text" name="numero-cartao" id="numero-cartao" class="formbold-form-input" required>
+        <form id="formCartao">
+          <div class="formbold-form-title">
+              <h2>Cadastro dados do cartão</h2>
           </div>
-        </div>
+          <div class="formbold-mb-3">
+              <div>
+                  <label for="numero-cartao" class="formbold-form-label">Número do cartão</label>
+                  <input type="text" name="numero-cartao" id="numero-cartao" class="formbold-form-input" required>
+              </div>
+          </div>
           <div>
-            <label for="bandeira" class="formbold-form-label">Bandeira</label>
-            <input type="text" name="bandeira" id="bandeira" class="formbold-form-input" required>
+              <label for="bandeira" class="formbold-form-label">Bandeira</label>
+              <input type="text" name="bandeira" id="bandeira" class="formbold-form-input" required>
+          </div>
+          <div class="row">
+              <div class="col-md-6">
+                  <label for="codigo" class="formbold-form-label">Código de segurança</label>
+                  <input type="text" name="codigo" id="codigo" class="formbold-form-input form-control" required>
+              </div>
+      
+              <div class="col-md-6">
+                  <label for="nome" class="formbold-form-label">Nome (como está no cartão)</label>
+                  <input type="text" name="nome" id="nome" class="formbold-form-input form-control" required>
+              </div>
+          </div>
+          
+          <div>
+              <label for="vencimento" class="formbold-form-label">Vencimento</label>
+              <input type="text" name="vencimento" id="vencimento" class="formbold-form-input" required>
           </div>
           <div class="formbold-input-flex">
-          <div>
-            <label for="codigo" class="formbold-form-label">Codigo de segurança</label>
-            <input type="text" name="codigo" id="codigo" class="formbold-form-input" required>
+              
           </div>
-        
-          <div>
-            <label for="nome" class="formbold-form-label">Nome(como está no cartão)</label>
-            <input type="text" name="nome" id="nome" class="formbold-form-input" required>
+          <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="endereco-principal">
+              <label class="form-check-label" for="endereco-principal">Definir como cartão principal</label>
           </div>
-        </div>
-          <div>
-            <label for="vencimento" class="formbold-form-label">Vencimento</label>
-            <input type="text" name="vencimento" id="vencimento" class="formbold-form-input" required>
-          </div>
-        <div class="formbold-input-flex">
-          
-        </div>
-        <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" id="endereco-principal">
-            <label class="form-check-label" for="endereco-principal">Definir como cartão principal</label>
-          </div>
-        <button type="submit" class="formbold-btn" onclick="postclientes(event)">Cadastrar</button>
+          <button type="submit" class="formbold-btn">Cadastrar</button>
       </form>
+      
     </div>
     
   </div>
