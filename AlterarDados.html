@@ -15,19 +15,14 @@
         <a class="navbar-brand">
           <img class="navbar-icone rounded-circle" src="assets/images.png" alt="">
         </a>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mt-2 mt-lg-0"></ul>
-
             <div class="dropdown d-flex align-items-center">
                 <img src="assets/premium_photo-1689539137236-b68e436248de.jpeg" alt="Imagem" class="rounded-circle me-2" width="40" height="40">
-                
                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px;"></button>
-
                 <ul class="dropdown-menu"> 
                     <li><a class="dropdown-item" onclick="passarIdCartao()">Meus Cartões</a></li>
                     <li><a class="dropdown-item" onclick="passarIdEndereco()">Meus Endereços</a></li>
@@ -45,26 +40,24 @@
           <h2>Alterar dados</h2>
         </div>
         <div class="formbold-mb-3">
-          <div>
-            <label for="nome" class="formbold-form-label">Nome</label>
-            <input type="text" name="nome" id="nome" class="formbold-form-input" required>
-          </div>
+          <label for="nome" class="formbold-form-label">Nome</label>
+          <input type="text" name="nome" id="nome" class="formbold-form-input" required>
         </div>
-        <div class="formbold-input-flex">
-          <div>
+        <div class="row g-3 formbold-mb-3">
+          <div class="col-md-6">
             <label for="genero" class="formbold-form-label">Gênero</label>
-            <input type="text" name="genero" id="genero" class="formbold-form-input" required>
+            <input type="text" name="genero" id="genero" class="formbold-form-input w-100" required>
           </div>
-          <div>
+          <div class="col-md-6">
             <label for="data-nascimento" class="formbold-form-label">Data de Nascimento</label>
-            <input type="text" name="data-nascimento" id="data-nascimento" class="formbold-form-input" required>
+            <input type="date" name="data-nascimento" id="data-nascimento" class="formbold-form-input w-100" required>
           </div>
         </div>
         <div class="formbold-mb-3">
           <label for="cpf" class="formbold-form-label">CPF</label>
           <input type="text" name="cpf" id="cpf" class="formbold-form-input" required>
         </div>
-        <div>
+        <div class="formbold-mb-3">
           <label for="email" class="formbold-form-label">E-mail</label>
           <input type="email" name="email" id="email" class="formbold-form-input" required>
         </div>
@@ -79,7 +72,7 @@
             <option value="inativo">Inativo</option>
           </select>
         </div>
-        <div>
+        <div class="formbold-mb-3">
           <label for="idade" class="formbold-form-label">Idade</label>
           <input type="number" name="idade" id="idade" class="formbold-form-input" required>
         </div>
@@ -87,6 +80,9 @@
       </form>
     </div>
   </div>
+  <footer class="bg-custom text-white text-center py-3 mt-4">
+    <p>&copy; 2025 Entre Páginas. Todos os direitos reservados.</p>
+  </footer>
   <script src="js/ScriptAlterarDados.js"></script>
 </body>
 </html>

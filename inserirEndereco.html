@@ -15,23 +15,20 @@
             <a class="navbar-brand">
               <img class="navbar-icone rounded-circle" src="assets/images.png" alt="">
             </a>
-
+            <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+              <li class="nav-item active"><a class="nav-link" href="historicoCompras.html">Minhas compras</a></li>
+          </ul>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mt-2 mt-lg-0">
-                    
-                </ul>
+                <ul class="navbar-nav me-auto mt-2 mt-lg-0"></ul>
 
                 <div class="dropdown d-flex align-items-center">
-                    
-                    
                     <img src="assets/premium_photo-1689539137236-b68e436248de.jpeg" alt="Imagem" class="rounded-circle me-2" width="40" height="40">
                     
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px;">
-                    </button>
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px;"></button>
 
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" onclick="passarIdCartao()">Meus Cartões</a></li>
@@ -39,7 +36,6 @@
                       <li><a class="dropdown-item" href="telaInicial.html">Sair</a></li>
                   </ul>
                 </div>
-                
             </div>
         </div>
     </nav>
@@ -62,26 +58,29 @@
             <label for="rua" class="formbold-form-label">Rua</label>
             <input type="text" name="rua" id="rua" class="formbold-form-input" required>
           </div>
-          <div class="formbold-input-flex">
-          <div>
+
+        <div class="row">
+          <div class="col-md-6">
             <label for="numero" class="formbold-form-label">Número</label>
             <input type="text" name="numero" id="numero" class="formbold-form-input" required>
           </div>
-          <div>
+          <div class="col-md-6">
             <label for="complemento" class="formbold-form-label">Complemento</label>
-            <input type="text" name="complemento" id="complemento" class="formbold-form-input" required>
+            <input type="text" name="complemento" id="complemento" class="formbold-form-input">
           </div>
         </div>
-          <div>
-            <label for="bairro" class="formbold-form-label">Bairro</label>
-            <input type="text" name="bairro" id="bairro" class="formbold-form-input" required>
-          </div>
-        <div class="formbold-input-flex">
-        <div class="formbold-mb-3">
-          <label for="cidade" class="formbold-form-label">Cidade</label>
-          <input type="text" name="cidade" id="cidade" class="formbold-form-input" required>
-        </div>
+
         <div>
+          <label for="bairro" class="formbold-form-label">Bairro</label>
+          <input type="text" name="bairro" id="bairro" class="formbold-form-input" required>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="cidade" class="formbold-form-label">Cidade</label>
+            <input type="text" name="cidade" id="cidade" class="formbold-form-input" required>
+          </div>
+          <div class="col-md-6">
             <label for="estado" class="formbold-form-label">Estado</label>
             <select class="form-select" id="estado" required>
                 <option selected disabled>Selecione</option>
@@ -113,17 +112,22 @@
                 <option value="SE">Sergipe</option>
                 <option value="TO">Tocantins</option>
               </select>
+          </div>
         </div>
-        </div>
+
         <div class="form-check mt-3">
             <input class="form-check-input" type="checkbox" id="endereco-principal">
             <label class="form-check-label" for="endereco-principal">Definir como endereço principal</label>
-          </div>
+        </div>
+
         <button type="submit" class="formbold-btn" onclick="postEndereco(event)">Enviar</button>
       </form>
     </div>
-    
   </div>
+
+  <footer class="bg-custom text-white text-center py-3 mt-4">
+    <p>&copy; 2025 Entre Páginas. Todos os direitos reservados.</p>
+  </footer>
   
   <script src="js/scriptInserirEnderecos.js"></script>
 </body>

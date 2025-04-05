@@ -23,12 +23,12 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mt-2 mt-lg-0">
-                   
+                    <li class="nav-item active"><a class="nav-link" href="historicoCompras.html">Minhas compras</a></li>
                 </ul>
 
                 <form class="d-flex me-3" role="search">
                     <div class="position-relative w-100">
-                        <input class="form-control pe-5" type="search" placeholder="Pesquisar" aria-label="Pesquisar">
+                        <input id="barraPesquisa" class="form-control pe-5" type="search" placeholder="Pesquisar" aria-label="Pesquisar">
                         <button class="btn position-absolute top-50 end-0 translate-middle-y" type="submit">
                             <img src="assets/—Pngtree—magnifying glass icon_5464846.png" alt="Buscar" width="20" height="20">
                         </button>
@@ -47,6 +47,8 @@
                         <img src="assets/premium_photo-1689539137236-b68e436248de.jpeg" alt="Imagem" class="rounded-circle me-2" width="40" height="40">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px;"></button>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="passarIdCartao()">Meus Cartões</a></li>
+                            <li><a class="dropdown-item" onclick="passarIdEndereco()">Meus Endereços</a></li>
                             <li><a class="dropdown-item" href="telaInicial.html">Sair</a></li>
                         </ul>
                     </div>
@@ -59,60 +61,10 @@
         <section class="container my-5">
             <h2 class="text-center mb-4">Livros</h2>
             <div class="row">
-                <div class="col-md-3">
-                    <div class="card book-card">
-                        <img src="assets/senhor dos aneis.jpeg" class="card-img-top" alt="Senhor dos Aneis" data-bs-toggle="modal" data-bs-target="#modal1">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Senhor dos Aneis</h5>
-                            <p class="card-text">R$49,90</p>
-                            <div class="row">
-                                <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                                <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card book-card">
-                        <img src="assets/aTorredoElefante.jpeg" class="card-img-top" alt="A Torre do Elefante" data-bs-toggle="modal" data-bs-target="#modal2">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">A Torre do Elefante</h5>
-                            <p class="card-text">R$55,93</p>
-                            <div class="row">
-                                <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                                <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card book-card">
-                        <img src="assets/pricopprobre.jpeg" class="card-img-top" alt="Pai Rico, Pai Pobre" data-bs-toggle="modal" data-bs-target="#modal3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Pai Rico, Pai Pobre</h5>
-                            <p class="card-text">R$37,13</p>
-                            <div class="row">
-                                <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                                <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card book-card">
-                        <img src="assets/Sol da Meia-Noite.jpg" class="card-img-top" alt="Sol da meia-noite" data-bs-toggle="modal" data-bs-target="#modal4">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Sol da meia-noite</h5>
-                            <p class="card-text">R$37,99</p>
-                            <div class="row">
-                                <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                                <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </section>
+        
     </div>
 <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
     <div class="modal-dialog">
@@ -164,7 +116,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <img src="assets/pricopprobre.jpeg" class="img-fluid mb-3" alt="Pai Rico, Pai Pobre" style="max-width: 100%; height: auto; max-height: 300px;">
+                <img src="assets/PaiRicoPaiPobre.jpeg" class="img-fluid mb-3" alt="Pai Rico, Pai Pobre" style="max-width: 100%; height: auto; max-height: 300px;">
                 <p><strong>Título:</strong> Pai Rico, Pai Pobre</p>
                 <p><strong>Descrição:</strong> Um guia para educação financeira e independência.</p>
                 <p><strong>Preço:</strong> R$37,13</p>
@@ -190,8 +142,8 @@
                 <p><strong>Descrição:</strong> Uma história envolvente que mergulha nas profundezas do mistério e romance.</p>
                 <p><strong>Preço:</strong> R$37,99</p>
                 <div class="row mt-3">
-                    <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                    <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
+                    <div class="col"><a href="finalizarCompra.html" class="btn btn-success">Compre Agora</a></div>
+                    <div class="col"><a href="" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
                 </div>
             </div>
         </div>
@@ -224,6 +176,9 @@
         </div>
     </div>
 </div>
-
+<footer class="bg-custom text-white text-center py-3 mt-4">
+    <p>&copy; 2025 Entre Páginas. Todos os direitos reservados.</p>
+  </footer>
+  <script src="js/ScriptTelaInicial.js"></script>
 </body>
 </html>
