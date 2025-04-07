@@ -1,8 +1,10 @@
 let livrosOriginais = [];
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+const urlParams = new URLSearchParams(window.location.search);
+let id = urlParams.get('id'); // <- pega o id uma vez aqui
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetchLivros();
+    fetchLivros(); // não muda aqui
     atualizarBadgeCarrinho();
 
     const form = document.querySelector('form[role="search"]');
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const filtrados = livrosOriginais.filter(livro =>
             livro.livTitulo.toLowerCase().includes(termo)
         );
-        renderLivros(filtrados);
+        renderLivros(filtrados, id); // <- passa o id corretamente aqui
     });
 });
 
@@ -25,14 +27,14 @@ function fetchLivros() {
         .then(response => response.json())
         .then(livros => {
             livrosOriginais = livros;
-            renderLivros(livros);
+            renderLivros(livros, id); // <- importante
         })
         .catch(error => {
             console.error('Erro ao buscar livros:', error);
         });
 }
 
-function renderLivros(livros) {
+function renderLivros(livros, id) {
     const container = document.querySelector('.row');
     container.innerHTML = '';
 
@@ -44,7 +46,7 @@ function renderLivros(livros) {
         card.classList.add('col-md-3', 'mb-4');
         card.innerHTML = `
             <div class="card book-card h-100">
-                <a href="detalhesLivros.html?id=${livro.livId}">
+                <a href="detalhesLivros.html?liv_id=${livro.livId}&id=${id}">
                     <img src="${livro.livImagem}" class="card-img-top" alt="${livro.livTitulo}">
                 </a>
                 <div class="card-body text-center">

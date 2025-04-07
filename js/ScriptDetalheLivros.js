@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const livroId = urlParams.get("id");
+    const livroId = urlParams.get("liv_id");
+    const userId = urlParams.get("id");
 
     if (!livroId) {
         alert("Livro não encontrado.");
-        window.location.href = "telaInicial.html";
+        window.location.href = userId ? `telaInicial.html?id=${userId}` : "telaInicial.html";
         return;
     }
 
@@ -37,4 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(error);
             alert("Erro ao carregar informações do livro.");
         });
+
+    // Atualizar os links dos botões com o ID do usuário
+    if (userId) {
+        document.querySelectorAll("a").forEach(link => {
+            if (link.href && !link.href.includes("logout")) {
+                const url = new URL(link.href, window.location.origin);
+                url.searchParams.set("id", userId);
+                link.href = url.toString();
+            }
+        });
+    }
 });
