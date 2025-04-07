@@ -1,7 +1,9 @@
 let livrosOriginais = [];
+let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchLivros();
+    atualizarBadgeCarrinho();
 
     const form = document.querySelector('form[role="search"]');
     form.addEventListener('submit', function (event) {
@@ -35,32 +37,81 @@ function renderLivros(livros) {
     container.innerHTML = '';
 
     livros.forEach(livro => {
-        const preco = livro.livPreco ? `R$ ${livro.livPreco.toFixed(2)}` : 'Preço indisponível';
-        const card = `
-            <div class="col-md-3 mb-4">
-                <div class="card book-card h-100">
+        const valorVenda = parseFloat(livro.LIV_VENDA);
+        const preco = !isNaN(valorVenda) ? `R$ ${valorVenda.toFixed(2)}` : 'Preço indisponível';
+
+        const card = document.createElement('div');
+        card.classList.add('col-md-3', 'mb-4');
+        card.innerHTML = `
+            <div class="card book-card h-100">
+                <a href="detalhesLivros.html?id=${livro.livId}">
                     <img src="${livro.livImagem}" class="card-img-top" alt="${livro.livTitulo}">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${livro.livTitulo}</h5>
-                        <p class="card-text">${preco}</p>
-                        <div class="row">
-                            <div class="col"><a href="#" class="btn btn-success">Compre Agora</a></div>
-                            <div class="col"><a href="#" class="btn btn-outline-primary">Adicione no Carrinho</a></div>
+                </a>
+                <div class="card-body text-center">
+                    <h5 class="card-title">${livro.livTitulo}</h5>
+                    <p class="card-text">${preco}</p>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-success btn-comprar-agora">Compre Agora</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-primary btn-adicionar-carrinho">Adicione no Carrinho</button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
-        container.innerHTML += card;
+
+
+        const btnComprar = card.querySelector('.btn-comprar-agora');
+        btnComprar.addEventListener('click', () => comprarAgora(livro));
+
+        const btnAdicionar = card.querySelector('.btn-adicionar-carrinho');
+        btnAdicionar.addEventListener('click', () => adicionarAoCarrinho(livro));
+
+        container.appendChild(card);
     });
 }
-function passarIdCartao (){
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
-    window.location.href = `cartoes.html?id=${id}`
+
+function adicionarAoCarrinho(livro) {
+    const livroExistente = carrinho.find(item => item.livId === livro.livId);
+    if (livroExistente) {
+        livroExistente.quantidade += 1;
+    } else {
+        carrinho.push({ ...livro, quantidade: 1 });
+    }
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    atualizarBadgeCarrinho();
 }
-function passarIdEndereco (){
+
+function comprarAgora(livro) {
+    const carrinhoAtual = JSON.parse(localStorage.getItem('carrinho')) || [];
+
+    const livroExistente = carrinhoAtual.find(item => item.livId === livro.livId);
+    if (livroExistente) {
+        livroExistente.quantidade += 1;
+    } else {
+        carrinhoAtual.push({ ...livro, quantidade: 1 });
+    }
+
+    localStorage.setItem('carrinho', JSON.stringify(carrinhoAtual));
+    window.location.href = 'Carrinho.html';
+}
+
+function atualizarBadgeCarrinho() {
+    const badge = document.querySelector('.navbar .badge');
+    const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+    badge.textContent = totalItens;
+}
+
+function passarIdCartao () {
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id');
-    window.location.href = `enderecos.html?id=${id}`
+    window.location.href = `cartoes.html?id=${id}`;
+}
+
+function passarIdEndereco () {
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+    window.location.href = `enderecos.html?id=${id}`;
 }
