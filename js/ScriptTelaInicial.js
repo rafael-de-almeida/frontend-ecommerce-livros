@@ -96,8 +96,16 @@ function comprarAgora(livro) {
     }
 
     localStorage.setItem('carrinho', JSON.stringify(carrinhoAtual));
+<<<<<<< HEAD
     window.location.href = `Carrinho.html?id=${id}`; // <- redireciona com o id
+=======
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+    window.location.href = `Carrinho.html?id=${id}`; 
+>>>>>>> 84c6b6b264f11c6bf4e06d5a4ecda1ffba1b9cae
 }
+
 
 function atualizarBadgeCarrinho() {
     const badge = document.querySelector('.navbar .badge');
