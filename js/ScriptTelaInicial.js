@@ -115,3 +115,8 @@ function passarIdEndereco () {
     let id = urlParams.get('id');
     window.location.href = `enderecos.html?id=${id}`;
 }
+function passarIdCarrinho() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+    window.location.href = `Carrinho.html?id=${id}`;
+}

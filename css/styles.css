@@ -383,3 +383,8 @@ footer {
 .inicio{
   overflow-x: hidden;
 }
+.mini-card img {
+  max-width: 80px;
+  max-height: 120px;
+  object-fit: contain;
+}

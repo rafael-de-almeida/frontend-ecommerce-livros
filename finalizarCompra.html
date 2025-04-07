@@ -49,11 +49,9 @@
             </select>
             <a onclick="passarIdEndereco()" class="btn btn-link">Adicionar Novo Endereço</a>
           </div>
-          <div class="col-md-4 d-flex align-items-center">
-            <p class="mb-0">Frete: R$20,00</p>
-          </div>
         </div>
       </div>
+      
 
       <div class="mb-4">
         <h3>Forma de Pagamento</h3>
@@ -97,13 +95,22 @@
             <small>R$37,13</small>
           </div>
         </div>
-        <hr>
-        <p>Produtos: R$140,46</p>
-        <p>Frete:R$20,00</p>
-        <p>Desconto(Cupom):R$0,00</p>
-        <p><strong>Total: R$160,46</strong></p>
+        <div class="container mt-4">
+          <div class="row mini-products mb-4"></div>
+        
+          <div class="card p-3 shadow-sm rounded resumo-box bg-light">
+            <p class="mb-1 fs-5 text-secondary" id="resumo-produtos"></p>
+            <p class="mb-1 fs-5 text-secondary" id="resumo-frete"></p>
+            <p class="mb-1 fs-5 text-secondary" id="resumo-desconto"></p>
+            <p class="mb-1 fs-5 text-dark" id="resumo-total"></p>
+            <p class="mt-2">
+              <span class="badge bg-primary fs-6" id="resumo-quantidade">Total de livros: 0</span>
+            </p>
+          </div>
+        </div>
+              
       </div>
-      <button type="button" class="btn btn-success w-100" id="finalizarCompraBtn">Finalizar Compra</button>
+      <button type="button" onclick="if (validarPagamentoCartoes()) finalizarCompra();"  class="btn btn-success w-100" id="finalizarCompraBtn">Finalizar Compra</button>
     </form>
   </div>
 

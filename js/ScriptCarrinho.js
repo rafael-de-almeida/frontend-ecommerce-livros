@@ -76,6 +76,7 @@ function removerItem(index) {
     renderizarCarrinho();
 }
 
+
 document.querySelector('.btn-success').addEventListener('click', () => {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
@@ -87,4 +88,16 @@ document.querySelector('.btn-success').addEventListener('click', () => {
     
     window.location.href = 'finalizarCompra.html';
 });
+
+function passarIdFinalizarCompra(event) {
+    event.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+    window.location.href = `finalizarCompra.html?id=${id}`;
+
+    if (!id) {
+        console.log("Nenhum ID capturado na URL.");
+        return;
+    }
+}
 
