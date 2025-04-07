@@ -47,7 +47,7 @@
               <option value="endereco1">Rua A, 123 - São Paulo</option>
               <option value="endereco2">Rua B, 456 - Rio de Janeiro</option>
             </select>
-            <a href="enderecos.html" class="btn btn-link">Adicionar Novo Endereço</a>
+            <a onclick="passarIdEndereco()" class="btn btn-link">Adicionar Novo Endereço</a>
           </div>
           <div class="col-md-4 d-flex align-items-center">
             <p class="mb-0">Frete: R$20,00</p>
@@ -66,7 +66,7 @@
         </div>
         <button class="btn btn-primary" type="button" id="adicionar-cartao">Adicionar Outro Cartão</button>
 
-        <a href="enderecos.html" class="btn btn-link">Adicionar Novo Cartão</a>
+        <a onclick="passarIdCartao()" class="btn btn-link">Adicionar Novo Cartão</a>
       </div>
       
       <div class="mb-4">
@@ -91,7 +91,7 @@
             <small>R$55,93</small>
           </div>
           <div class="col-4 mini-card">
-            <img src="assets/pricopprobre.jpeg" alt="Pai Rico, Pai Pobre" class="img-thumbnail">
+            <img src="assets\PaiRicoPaiPobre.jpeg" alt="Pai Rico, Pai Pobre" class="img-thumbnail">
             <small>Pai Rico, Pai Pobre</small>
             <p>1</p>
             <small>R$37,13</small>
@@ -123,33 +123,7 @@
       </div>
     </div>
   </div>
-  
-  <script>
-    document.getElementById("finalizarCompraBtn").addEventListener("click", function () {
-      var modal = new bootstrap.Modal(document.getElementById("statusCompraModal"));
-      modal.show();
-      
-      setTimeout(function () {
-        window.location.href = "historicoCompras.html"; 
-      }, 2000);
-    });
 
-    const adicionarCartaoButton = document.getElementById('adicionar-cartao');
-    const cartoesContainer = document.getElementById('cartoes-container');
-
-    adicionarCartaoButton.addEventListener('click', () => {
-      const novoCartaoContainer = document.createElement('div');
-      
-      novoCartaoContainer.innerHTML = `
-        <select class="form-select mb-2" aria-label="Novo Cartão">
-          <option value="" selected>Selecione um cartão</option>
-          <option value="cartao1">Cartão de Crédito - **** 1234</option>
-          <option value="cartao2">Cartão de Crédito - **** 5678</option>
-        </select>
-      `;
-      
-      cartoesContainer.appendChild(novoCartaoContainer); 
-    });
-  </script>
+  <script src="js/scriptFinalizarCompra.js"></script>
 </body>
 </html>

@@ -380,3 +380,6 @@ footer {
 .chat-button span {
   font-size: 24px;
 }
+.inicio{
+  overflow-x: hidden;
+}
