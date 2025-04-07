@@ -1,15 +1,15 @@
 let livrosOriginais = [];
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 const urlParams = new URLSearchParams(window.location.search);
-let id = urlParams.get('id'); // <- pega o id uma vez aqui
+let id = urlParams.get('id'); // pega o id da URL
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetchLivros(); // não muda aqui
+    fetchLivros();
     atualizarBadgeCarrinho();
 
     const form = document.querySelector('form[role="search"]');
     form.addEventListener('submit', function (event) {
-        event.preventDefault(); 
+        event.preventDefault();
     });
 
     const inputPesquisa = document.getElementById('barraPesquisa');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const filtrados = livrosOriginais.filter(livro =>
             livro.livTitulo.toLowerCase().includes(termo)
         );
-        renderLivros(filtrados, id); // <- passa o id corretamente aqui
+        renderLivros(filtrados, id); // <- id mantido
     });
 });
 
@@ -27,7 +27,7 @@ function fetchLivros() {
         .then(response => response.json())
         .then(livros => {
             livrosOriginais = livros;
-            renderLivros(livros, id); // <- importante
+            renderLivros(livros, id);
         })
         .catch(error => {
             console.error('Erro ao buscar livros:', error);
@@ -64,7 +64,6 @@ function renderLivros(livros, id) {
             </div>
         `;
 
-
         const btnComprar = card.querySelector('.btn-comprar-agora');
         btnComprar.addEventListener('click', () => comprarAgora(livro));
 
@@ -97,7 +96,7 @@ function comprarAgora(livro) {
     }
 
     localStorage.setItem('carrinho', JSON.stringify(carrinhoAtual));
-    window.location.href = 'Carrinho.html';
+    window.location.href = `Carrinho.html?id=${id}`; // <- redireciona com o id
 }
 
 function atualizarBadgeCarrinho() {
@@ -107,18 +106,13 @@ function atualizarBadgeCarrinho() {
 }
 
 function passarIdCartao () {
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
     window.location.href = `cartoes.html?id=${id}`;
 }
 
 function passarIdEndereco () {
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
     window.location.href = `enderecos.html?id=${id}`;
 }
+
 function passarIdCarrinho() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
     window.location.href = `Carrinho.html?id=${id}`;
 }
