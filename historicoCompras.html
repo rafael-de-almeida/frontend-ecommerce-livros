@@ -37,53 +37,10 @@
   <div class="container mt-4">
     <h2 class="mb-4">Histórico de Compras</h2>
     
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pedido #1</h5>
-        <p class="card-text">Data: 15/03/2025</p>
-        <p class="card-text">Valor Total: R$ 129,70</p>
-        <span class="badge bg-success">Entregue</span>
-        <ul class="mt-3">
-          <li>Livro: A Revolução dos Bichos - R$ 29,90</li>
-          <li>Livro: 1984 - R$ 39,90</li>
-          <li>Livro: O Senhor dos Anéis - R$ 59,90</li>
-        </ul>
-        <button class="btn btn-danger mt-2" onclick="pedirDevolucao(1)">Pedir Troca</button>
-      </div>
-    </div>
-    
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pedido #2</h5>
-        <p class="card-text">Data: 10/03/2025</p>
-        <p class="card-text">Valor Total: R$ 79,80</p>
-        <span class="badge bg-warning">Em Processamento</span>
-        <ul class="mt-3">
-          <li>Livro: Dom Casmurro - R$ 39,90</li>
-          <li>Livro: Memórias Póstumas de Brás Cubas - R$ 39,90</li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Pedido #3</h5>
-        <p class="card-text">Data: 05/03/2025</p>
-        <p class="card-text">Valor Total: R$ 99,90</p>
-        <span class="badge bg-warning">Em Processamento</span>
-        <ul class="mt-3">
-          <li>Livro: O Pequeno Príncipe - R$ 99,90</li>
-        </ul>
-      </div>
-    </div>
   </div>
   <footer class="bg-custom text-white text-center py-3 mt-4">
     <p>&copy; 2025 Entre Páginas. Todos os direitos reservados.</p>
   </footer>
-  <script>
-    function pedirDevolucao(pedidoId) {
-      alert(`Pedido #${pedidoId}: Solicitação de devolução enviada.`);
-    }
-  </script>
+  <script src="js/scriptHistoricoCompras.js"></script>
 </body>
 </html>
