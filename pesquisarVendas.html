@@ -63,27 +63,27 @@
                     <form id="form-cliente">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome Cliente</label>
-                            <input type="text" name="nome" id="nome" class="form-control" required>
+                            <input type="text" name="nome" id="nome" class="form-control" >
                         </div>
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="genero" class="form-label">Produtos</label>
-                                <input type="text" name="genero" id="genero" class="form-control" required>
+                                <label for="produtos" class="form-label">Produtos</label>
+                                <input type="text" name="produtos" id="produtos" class="form-control" >
                             </div>
                             <div class="col">
-                                <label for="data-nascimento" class="form-label">Valor</label>
-                                <input type="text" name="data-nascimento" id="data-nascimento" class="form-control" required>
+                                <label for="valor" class="form-label">Valor</label>
+                                <input type="text" name="valor" id="valor" class="form-control" >
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="idade" class="form-label">Número do pedido</label>
-                                <input type="number" name="idade" id="idade" class="form-control" required>
+                                <label for="numero-pedido" class="form-label">Número do pedido</label>
+                                <input type="number" name="numero-pedido" id="numero-pedido" class="form-control" >
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="cpf" class="form-label">Status</label>
-                            <input type="text" name="cpf" id="cpf" class="form-control" required>
+                            <label for="status" class="form-label">Status</label>
+                            <input type="text" name="status" id="status" class="form-control" >
                         </div>
                         <div class="row g-3">
                              <div class="col-md-5">
@@ -114,6 +114,7 @@
                                     <th>Nome Cliente</th>
                                     <th>Produtos</th>
                                     <th>Valor</th>
+                                    <th>Data do pedido</th>
                                     <th>Número Pedido</th>
                                     <th>Status</th>
                                     <th>Ações</th>
@@ -171,6 +172,6 @@
       </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
+      <script src="js/ScriptPesquisarVenda.js"></script>
 </body>
 </html>

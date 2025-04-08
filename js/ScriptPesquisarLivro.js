@@ -81,6 +81,5 @@ function editarLivro(id) {
   window.location.href = `AlterarLivro.html?id=${id}`;
 }
 
-// ✅ Corrigido ID do formulário
 document.getElementById('form-cliente').addEventListener('submit', postLivros);
 document.addEventListener('DOMContentLoaded', () => postLivros());
