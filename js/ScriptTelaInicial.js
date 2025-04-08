@@ -83,6 +83,7 @@ function adicionarAoCarrinho(livro) {
     }
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
     atualizarBadgeCarrinho();
+    mostrarMensagemSucesso(); 
 }
 
 function comprarAgora(livro) {
@@ -119,4 +120,12 @@ function passarIdEndereco () {
 
 function passarIdCarrinho() {
     window.location.href = `Carrinho.html?id=${id}`;
+}
+function mostrarMensagemSucesso() {
+    const msg = document.getElementById("mensagemSucesso");
+    msg.style.display = "block";
+
+    setTimeout(() => {
+        msg.style.display = "none";
+    }, 3000);
 }

@@ -11,13 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetch(`http://localhost:8080/site/livros/${livroId}`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Erro ao buscar dados do livro.");
-            }
+            if (!response.ok) throw new Error("Erro ao buscar dados do livro.");
             return response.json();
         })
         .then(livro => {
-            // Exibir os dados do livro na página
             document.getElementById("livroImagem").src = livro.livImagem;
             document.getElementById("livroTitulo").textContent = livro.livTitulo;
             document.getElementById("livroAutor").textContent = livro.LIV_AUTOR;
@@ -28,18 +25,29 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("livroPaginas").textContent = livro.LIV_QTD_PAGINAS;
             document.getElementById("livroDimensao").textContent = livro.LIV_DIMENSAO;
             document.getElementById("livroSinopse").textContent = livro.LIV_SINOPSE;
+            document.getElementById("livroPreco").textContent = 
+                livro.LIV_VENDA ? `R$ ${parseFloat(livro.LIV_VENDA).toFixed(2).replace('.', ',')}` : "Preço indisponível";
 
-            const valorVenda = parseFloat(livro.LIV_VENDA);
-            document.getElementById("livroPreco").textContent = !isNaN(valorVenda)
-                ? `R$ ${valorVenda.toFixed(2).replace('.', ',')}`
-                : "Preço indisponível";
+            // Botões programados
+            const btnComprarAgora = document.querySelector(".btn.btn-success");
+            const btnAdicionarCarrinho = document.querySelector(".btn.btn-outline-primary");
+
+            btnComprarAgora.addEventListener("click", (e) => {
+                e.preventDefault();
+                adicionarAoCarrinho(livro);
+                window.location.href = `Carrinho.html?id=${userId}`;
+            });
+
+            btnAdicionarCarrinho.addEventListener("click", (e) => {
+                e.preventDefault();
+                adicionarAoCarrinho(livro);
+            });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            console.error(err);
             alert("Erro ao carregar informações do livro.");
         });
 
-    // Atualizar os links dos botões com o ID do usuário
     if (userId) {
         document.querySelectorAll("a").forEach(link => {
             if (link.href && !link.href.includes("logout")) {
@@ -49,4 +57,37 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    atualizarBadgeCarrinho();
 });
+
+function adicionarAoCarrinho(livro) {
+    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+    const itemExistente = carrinho.find(item => item.livId === livro.livId);
+    if (itemExistente) {
+        itemExistente.quantidade += 1;
+    } else {
+        carrinho.push({ ...livro, quantidade: 1 });
+    }
+
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    atualizarBadgeCarrinho();
+    mostrarMensagemSucesso();
+}
+
+function atualizarBadgeCarrinho() {
+    const badge = document.querySelector(".navbar .badge");
+    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+    const totalItens = carrinho.reduce((soma, item) => soma + item.quantidade, 0);
+    if (badge) badge.textContent = totalItens;
+}
+function mostrarMensagemSucesso() {
+    const msg = document.getElementById("mensagemSucesso");
+    msg.style.display = "block";
+
+    
+    setTimeout(() => {
+        msg.style.display = "none";
+    }, 3000);
+}
