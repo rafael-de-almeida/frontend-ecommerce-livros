@@ -388,7 +388,7 @@ async function finalizarCompra() {
 
         if (!response.ok) throw new Error("Erro ao finalizar compra");
 
-        const result = await response.json();
+        const result = await response.text();
         localStorage.removeItem("carrinho");
         mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
     } catch (error) {
@@ -396,5 +396,8 @@ async function finalizarCompra() {
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
     }
 }
+function mostrarModalSucesso(mensagem) {
+    alert(mensagem); // ou troque por um modal estilizado, se quiser
+  }
 
 
