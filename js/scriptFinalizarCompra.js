@@ -341,9 +341,60 @@ function passarIdEndereco() {
     let id = urlParams.get('id');
     window.location.href = `enderecos.html?id=${id}`;
 }
-function finalizarCompra(){
-    if (!validarPagamentoCartoes()) {
-        return;
+async function finalizarCompra() {
+    if (!validarPagamentoCartoes()) return;
+
+    const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    const enderecoSelecionado = parseInt(document.getElementById("endereco-selecionado").value);
+    const urlParams = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(urlParams.get('id'));
+
+    // Extrai valor do total (em centavos)
+    const totalTexto = document.getElementById("resumo-total").textContent;
+    const precoTotalCentavos = Number(totalTexto.replace(/\D/g, ''));
+    const precoTotal = parseFloat((precoTotalCentavos / 100).toFixed(2));
+
+    const livros = carrinho.map(livro => ({
+        livroId: livro.livId,
+        quantidade: livro.quantidade,
+        preco: parseFloat(parseFloat(livro.LIV_VENDA).toFixed(2))
+    }));
+
+    const pagamentos = selectsCartoes.map(({ select }) => ({
+        cartaoId: parseInt(select.value),
+        status: "PENDENTE"
+    }));
+
+    const dataAtual = new Date().toISOString().split("T")[0]; // formato: "YYYY-MM-DD"
+
+    const body = {
+        precoTotal: precoTotal,
+        status: "PENDENTE",
+        data: dataAtual,
+        clienteId: clienteId,
+        enderecoId: enderecoSelecionado,
+        livros: livros,
+        pagamentos: pagamentos
+    };
+
+    try {
+        const response = await fetch("http://localhost:8080/site/clientes/pedido/post", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) throw new Error("Erro ao finalizar compra");
+
+        const result = await response.json();
+        localStorage.removeItem("carrinho");
+        mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
+    } catch (error) {
+        console.error("Erro ao finalizar compra:", error);
+        alert("Houve um problema ao finalizar a compra. Tente novamente.");
     }
-    console.log("Finalizando compra...");
 }
+
+
