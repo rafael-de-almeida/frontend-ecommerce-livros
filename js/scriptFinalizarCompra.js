@@ -362,14 +362,14 @@ async function finalizarCompra() {
 
     const pagamentos = selectsCartoes.map(({ select }) => ({
         cartaoId: parseInt(select.value),
-        status: "PENDENTE"
+        status: "EM PROCESSAMENTO"
     }));
 
     const dataAtual = new Date().toISOString().split("T")[0]; // formato: "YYYY-MM-DD"
 
     const body = {
         precoTotal: precoTotal,
-        status: "PENDENTE",
+        status: "EM PROCESSAMENTO",
         data: dataAtual,
         clienteId: clienteId,
         enderecoId: enderecoSelecionado,
