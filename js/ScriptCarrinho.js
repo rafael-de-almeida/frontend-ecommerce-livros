@@ -32,7 +32,7 @@ function renderizarCarrinho() {
                 </div>
                 <div class="col-8 col-md-6 col-lg-6 align-self-center">
                     <h4><b><a href="#" class="text-decoration-none text-dark">${item.livTitulo}</a></b></h4>
-                    <p class="mb-1">${item.livDescricao || 'Descrição não disponível.'}</p>
+                    <p class="mb-1">${item.LIV_SINOPSE || 'Descrição não disponível.'}</p>
                     <h5 class="text-success">R$ ${preco.toFixed(2)}</h5>
                 </div>
                 <div class="col-12 col-md-3 col-lg-4 align-self-center">
