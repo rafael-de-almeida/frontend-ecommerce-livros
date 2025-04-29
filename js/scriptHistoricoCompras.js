@@ -1,7 +1,9 @@
-document.addEventListener("DOMContentLoaded", () => {
+const urlParams = new URLSearchParams(window.location.search);
+let clienteId = urlParams.get('id'); // pega o id da URL
+
+ document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".container");
-  const urlParams = new URLSearchParams(window.location.search);
-  let clienteId = urlParams.get('id'); // pega o id da URL
+
   
   fetch(`http://localhost:8080/site/clientes/pedido/get/${clienteId}`)
     .then(response => {

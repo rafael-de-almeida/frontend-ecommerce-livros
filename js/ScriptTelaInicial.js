@@ -113,7 +113,9 @@ function atualizarBadgeCarrinho() {
 function passarIdCartao () {
     window.location.href = `cartoes.html?id=${id}`;
 }
-
+function passarIdHistoricoCompras () {
+    window.location.href = `historicoCompras.html?id=${id}`;
+}
 function passarIdEndereco () {
     window.location.href = `enderecos.html?id=${id}`;
 }

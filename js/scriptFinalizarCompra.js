@@ -391,13 +391,53 @@ async function finalizarCompra() {
         const result = await response.text();
         localStorage.removeItem("carrinho");
         mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
+        
     } catch (error) {
         console.error("Erro ao finalizar compra:", error);
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
     }
 }
 function mostrarModalSucesso(mensagem) {
-    alert(mensagem); // ou troque por um modal estilizado, se quiser
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+  
+    fetch(`http://localhost:8080/site/clientes/pedido/get/${id}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Erro ao buscar pedido");
+        return response.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          // Descobrir o maior id
+          const maiorId = Math.max(...data.map(item => item.id));
+  
+          // Filtrar todos os pedidos com o maior id
+          const pedidosComMaiorId = data.filter(item => item.id === maiorId);
+  
+          // Montar a mensagem do recibo
+          let recibo = `Pedido Nº ${maiorId}\n`;
+          recibo += `Data: ${pedidosComMaiorId[0].data}\n`;
+          recibo += `Status: ${pedidosComMaiorId[0].status}\n`;
+          recibo += `\nItens:\n`;
+          pedidosComMaiorId.forEach(item => {
+            recibo += `- ${item.titulo} (Qtd: ${item.quantidade}) - R$ ${item.preco.toFixed(2)}\n`;
+          });
+  
+          recibo += `\nTotal: R$ ${pedidosComMaiorId[0].precoTotal.toFixed(2)}`;
+          recibo += `\n\nVeja o status da sua compra pelo historico de compras!`;
+          alert(mensagem);
+          alert(recibo);
+        } else {
+          alert("Nenhum pedido encontrado.");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert("Erro ao buscar o pedido.");
+      });
   }
+  
+  
+  
 
 
