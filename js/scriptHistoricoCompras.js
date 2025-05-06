@@ -121,18 +121,13 @@ function statusCor(status) {
 }
 
 function pedirDevolucao(clienteId, pedidoId) {
-  // Usar o modal existente no HTML em vez de criar um novo
   const modalTroca = document.getElementById('modalTroca');
   const modalCorpoTroca = document.getElementById('modalCorpoTroca');
   const modalTituloTroca = document.getElementById('modalTituloTroca');
   
-  // Atualizar o título do modal com o ID do pedido
   modalTituloTroca.textContent = `Solicitar Troca - Pedido #${pedidoId}`;
-  
-  // Limpar o conteúdo atual do modal
   modalCorpoTroca.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div></div>';
   
-  // Mostrar o modal enquanto carrega os dados
   const modal = new bootstrap.Modal(modalTroca);
   modal.show();
 
@@ -143,11 +138,14 @@ function pedirDevolucao(clienteId, pedidoId) {
     })
     .then(livros => {
       console.log("Livros recebidos:", livros);
-    
+
       if (!Array.isArray(livros) || livros.length === 0) {
         modalCorpoTroca.innerHTML = '<div class="alert alert-warning">Este pedido não possui livros disponíveis para troca.</div>';
         return;
       }
+
+      // Ordenar livros por título (livroTitulo)
+      livros.sort((a, b) => a.livroTitulo.localeCompare(b.livroTitulo));
 
       // Preencher o corpo do modal com os livros
       modalCorpoTroca.innerHTML = livros.map((livro, index) => `
@@ -162,7 +160,7 @@ function pedirDevolucao(clienteId, pedidoId) {
         </div>
       `).join("");
 
-      // Configurar os listeners para os checkboxes
+      // Ativar/desativar campos de quantidade conforme checkbox
       livros.forEach((_, index) => {
         const cb = document.getElementById(`livroCheck${index}`);
         const inputQtd = document.getElementById(`qtdLivro${index}`);
@@ -173,12 +171,11 @@ function pedirDevolucao(clienteId, pedidoId) {
         }
       });
 
-      // Configurar o evento de submissão do formulário
+      // Preparar o envio
       const formTroca = document.getElementById("formTroca");
-      // Remover qualquer handler existente para evitar duplicação
       const clonedForm = formTroca.cloneNode(true);
       formTroca.parentNode.replaceChild(clonedForm, formTroca);
-      
+
       clonedForm.addEventListener("submit", function (e) {
         e.preventDefault();
         try {
@@ -189,13 +186,9 @@ function pedirDevolucao(clienteId, pedidoId) {
               const qtd = parseInt(document.getElementById(`qtdLivro${index}`).value);
               const qtdMax = parseInt(cb.dataset.max);
               if (qtd < 1 || qtd > qtdMax) throw new Error(`Quantidade inválida para o livro ID ${livroId}`);
-              return { 
-                ordemLivroId: livro.id,
-                ordemId: pedidoId, 
-                livroId: livroId, 
-                livroTitulo: livro.livroTitulo, 
-                quantidade: qtd, 
-                preco: livro.preco 
+              return {
+                livroId: livroId,
+                quantidade: qtd
               };
             }
             return null;
@@ -207,11 +200,10 @@ function pedirDevolucao(clienteId, pedidoId) {
           }
 
           const trocaDTO = {
-            ordemOriginalId: clienteId,
+            ordemOriginalId: pedidoId,
             livrosParaTroca: livrosSelecionados
           };
 
-          // Corrigido o endpoint para a solicitação de troca
           fetch(`http://localhost:8080/site/clientes/pedido/troca`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -224,7 +216,6 @@ function pedirDevolucao(clienteId, pedidoId) {
             .then(msg => {
               alert(msg);
               modal.hide();
-              // Recarregar a página para atualizar o status dos pedidos
               window.location.reload();
             })
             .catch(err => {
