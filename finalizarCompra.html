@@ -66,11 +66,13 @@
         <a onclick="passarIdCartao()" class="btn btn-link">Adicionar Novo Cartão</a>
       </div>
       
-      <div class="mb-4">
-        <h3>Aplicar Cupom</h3>
-        <input type="text" class="form-control mb-2" id="codigo-cupom" placeholder="Digite o código do cupom">
-        <button type="button" class="btn btn-primary">Aplicar Cupom</button>
-      </div>
+<div class="mb-4">
+  <h3>Aplicar Cupom</h3>
+  <div class="input-group mb-2">
+    <input type="text" class="form-control" id="input-cupom" placeholder="Digite o código do cupom">
+    <button type="button" class="btn btn-primary" id="btn-aplicar-cupom" onclick="validarCupom()">Aplicar Cupom</button>
+  </div>
+</div>
 
       <div class="mb-4">
         <h3>Resumo da Compra</h3>

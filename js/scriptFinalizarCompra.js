@@ -1,6 +1,7 @@
 let cartoesDisponiveis = []; // Armazena os cartões do cliente
 let selectsCartoes = []; // Armazena todos os <select> dos cartões
 
+
 window.onload = function () {
     receberId();
 
@@ -31,10 +32,11 @@ function exibirResumoCarrinho() {
     const quantidadeResumo = document.getElementById('resumo-quantidade');
     const freteLabel = document.getElementById('frete-label');
     const enderecoSelecionado = document.getElementById('endereco-selecionado');
-    const enderecoValido = enderecoSelecionado && enderecoSelecionado.value !== "";
+
+    const enderecoValido = enderecoSelecionado && enderecoSelecionado.value?.trim() !== "";
 
     const fretePadrao = 2000;
-    const desconto = 0;
+    const desconto = typeof descontoCupom !== 'undefined' ? descontoCupom : 0;
     const limiteFreteGratis = 15000;
 
     let totalProdutos = 0;
@@ -44,15 +46,17 @@ function exibirResumoCarrinho() {
     const livrosAgrupados = {};
 
     carrinho.forEach(livro => {
-        const precoCentavos = Math.round(parseFloat(livro.LIV_VENDA) * 100);
+        const precoCentavos = Math.round((parseFloat(livro.LIV_VENDA) || 0) * 100);
+        const quantidade = Number(livro.quantidade) || 0;
+
         if (!livrosAgrupados[livro.livTitulo]) {
             livrosAgrupados[livro.livTitulo] = {
                 imagem: livro.livImagem,
                 precoCentavos: precoCentavos,
-                quantidade: livro.quantidade
+                quantidade: quantidade
             };
         } else {
-            livrosAgrupados[livro.livTitulo].quantidade += livro.quantidade;
+            livrosAgrupados[livro.livTitulo].quantidade += quantidade;
             if (livrosAgrupados[livro.livTitulo].precoCentavos !== precoCentavos) {
                 livrosAgrupados[livro.livTitulo].precoCentavos = Math.round(
                     (livrosAgrupados[livro.livTitulo].precoCentavos + precoCentavos) / 2
@@ -78,20 +82,23 @@ function exibirResumoCarrinho() {
         container.appendChild(col);
     });
 
-    let frete = null;
+    let frete = 0;
     if (enderecoValido) {
         frete = totalProdutos > limiteFreteGratis ? 0 : fretePadrao;
+    } else {
+        frete = null;
     }
 
     produtosResumo.textContent = `Produtos: R$${(totalProdutos / 100).toFixed(2).replace('.', ',')}`;
+
     if (frete !== null) {
-        freteResumo.textContent = frete === 0 ? "Frete: Grátis" : `Frete: R$${(frete / 100).toFixed(2).replace('.', ',')}`;
-        if (freteLabel) {
-            freteLabel.textContent = frete === 0 ? "Frete: Grátis" : `Frete: R$${(frete / 100).toFixed(2).replace('.', ',')}`;
-        }
+        const freteTexto = frete === 0 ? "Frete: Grátis" : `Frete: R$${(frete / 100).toFixed(2).replace('.', ',')}`;
+        freteResumo.textContent = freteTexto;
+        if (freteLabel) freteLabel.textContent = freteTexto;
     } else {
-        freteResumo.textContent = "Frete: selecione um endereço";
-        if (freteLabel) freteLabel.textContent = "Frete: selecione um endereço";
+        const msg = "Frete: selecione um endereço";
+        freteResumo.textContent = msg;
+        if (freteLabel) freteLabel.textContent = msg;
     }
 
     descontoResumo.textContent = `Desconto(Cupom): R$${(desconto / 100).toFixed(2).replace('.', ',')}`;
@@ -102,10 +109,91 @@ function exibirResumoCarrinho() {
     quantidadeResumo.textContent = `Total de livros: ${totalQuantidadeLivros}`;
 }
 
+let descontoCupom = 0;
+let cupomAplicado = null;
 
+async function validarCupom() {
+    const codigoCupom = document.getElementById("input-cupom").value.trim();
+    const mensagem = document.getElementById("resumo-desconto");
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+  
+    if (!codigoCupom) {
+        mensagem.textContent = "Digite um código de cupom.";
+        mensagem.classList.remove("text-success");
+        mensagem.classList.add("text-danger");
+        return;
+    }
 
+    try {
+        const response = await fetch("http://localhost:8080/api/cupons/validar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                codigo: codigoCupom,
+                clienteId: id  // certifique-se que isso está definido
+            })
+        });
 
+        const resultado = await response.json();
 
+        if (!response.ok || !resultado.valido) {
+            throw new Error(resultado.mensagem || "Cupom inválido.");
+        }
+        
+        localStorage.setItem('cupomId', resultado.cupomId || null);
+
+        // Armazenar dados do cupom aplicado
+        descontoCupom = Math.round(parseFloat(resultado.valor) * 100);
+        cupomAplicado = {
+            id: resultado.cupomId,
+            tipo: resultado.tipo,
+            valor: descontoCupom
+        };
+
+        mensagem.textContent = resultado.mensagem;
+        mensagem.classList.remove("text-danger");
+        mensagem.classList.add("text-success");
+
+        exibirResumoCarrinho();
+    } catch (error) {
+        descontoCupom = 0;
+        cupomAplicado = null;
+        mensagem.textContent = error.message || "Erro ao validar o cupom.";
+        mensagem.classList.remove("text-success");
+        mensagem.classList.add("text-danger");
+
+        exibirResumoCarrinho();
+    }
+}
+document.addEventListener("DOMContentLoaded", function () {
+    const inputCupom = document.getElementById("input-cupom");
+
+    inputCupom.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // evita enviar o formulário
+
+            const codigo = inputCupom.value.trim();
+
+            if (codigo === "") {
+                // Cancelar cupom
+                descontoCupom = 0;
+                cupomAplicado = null;
+
+                const mensagem = document.getElementById("resumo-desconto");
+                mensagem.textContent = "Cupom removido.";
+                mensagem.classList.remove("text-success");
+                mensagem.classList.add("text-danger");
+
+                exibirResumoCarrinho(); // atualiza o total sem desconto
+            } else {
+                validarCupom(); // se não estiver vazio, tenta validar o cupom
+            }
+        }
+    });
+});
 
 // Cria um novo select de cartão (com botão cancelar)
 function criarSelectCartao() {
@@ -208,10 +296,10 @@ function validarPagamentoCartoes() {
         }
 
         const valorCentavos = Math.round(valorReais * 100);
-        if (valorCentavos < 1000) {
-            alert("Cada cartão deve pagar pelo menos R$10,00.");
-            return false;
-        }
+       // if (valorCentavos < 1000) {
+       //     alert("Cada cartão deve pagar pelo menos R$10,00.");
+       //     return false;
+        //}
 
         soma += valorCentavos;
     }
@@ -391,13 +479,82 @@ async function finalizarCompra() {
         const result = await response.text();
         localStorage.removeItem("carrinho");
         mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
+        
     } catch (error) {
         console.error("Erro ao finalizar compra:", error);
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
     }
+
+    const cupomId = localStorage.getItem("cupomId");
+
+if (cupomId) {
+    try {
+        const response = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ cupomId: cupomId })
+        });
+
+        if (!response.ok) throw new Error("Erro ao finalizar compra");
+
+        const result = await response.json();
+        localStorage.removeItem("carrinho");
+        mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
+
+        localStorage.removeItem("cupomId");
+    } catch (error) {
+        console.error("Erro ao finalizar compra:", error);
+        alert("Houve um problema ao finalizar a compra. Tente novamente.");
+        localStorage.removeItem("cupomId");
+    }
+} else {
+    console.error("Cupom não encontrado no localStorage");
+    alert("Não há cupom aplicado.");
+}
 }
 function mostrarModalSucesso(mensagem) {
-    alert(mensagem); // ou troque por um modal estilizado, se quiser
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+  
+    fetch(`http://localhost:8080/site/clientes/pedido/get/${id}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Erro ao buscar pedido");
+        return response.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          // Descobrir o maior id
+          const maiorId = Math.max(...data.map(item => item.id));
+  
+          // Filtrar todos os pedidos com o maior id
+          const pedidosComMaiorId = data.filter(item => item.id === maiorId);
+  
+          // Montar a mensagem do recibo
+          let recibo = `Pedido Nº ${maiorId}\n`;
+          recibo += `Data: ${pedidosComMaiorId[0].data}\n`;
+          recibo += `Status: ${pedidosComMaiorId[0].status}\n`;
+          recibo += `\nItens:\n`;
+          pedidosComMaiorId.forEach(item => {
+            recibo += `- ${item.titulo} (Qtd: ${item.quantidade}) - R$ ${item.preco.toFixed(2)}\n`;
+          });
+  
+          recibo += `\nTotal: R$ ${pedidosComMaiorId[0].precoTotal.toFixed(2)}`;
+          recibo += `\n\nVeja o status da sua compra pelo historico de compras!`;
+          alert(mensagem);
+          alert(recibo);
+        } else {
+          alert("Nenhum pedido encontrado.");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert("Erro ao buscar o pedido.");
+      });
   }
+  
+  
+  
 
 
