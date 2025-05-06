@@ -120,7 +120,7 @@ function statusCor(status) {
   }
 }
 
-function pedirDevolucao(clienteId,  pedidoId) {
+function pedirDevolucao(clienteId, pedidoId) {
   // Usar o modal existente no HTML em vez de criar um novo
   const modalTroca = document.getElementById('modalTroca');
   const modalCorpoTroca = document.getElementById('modalCorpoTroca');
@@ -136,7 +136,7 @@ function pedirDevolucao(clienteId,  pedidoId) {
   const modal = new bootstrap.Modal(modalTroca);
   modal.show();
 
-  fetch(`http://localhost:8080/site/clientes/pedido/get/${clienteId}`)
+  fetch(`http://localhost:8080/site/ordens-livros/${pedidoId}`)
     .then(response => {
       if (!response.ok) throw new Error("Erro ao buscar livros do pedido.");
       return response.json();
@@ -155,7 +155,7 @@ function pedirDevolucao(clienteId,  pedidoId) {
           <input class="form-check-input me-2" type="checkbox" id="livroCheck${index}" 
                  data-livro-id="${livro.livroId}" data-max="${livro.quantidade}">
           <label class="form-check-label" for="livroCheck${index}">
-            ${livro.titulo} - R$ ${livro.preco.toFixed(2)} (Qtd disponível: ${livro.quantidade})
+            ${livro.livroTitulo} - R$ ${livro.preco.toFixed(2)} (Qtd disponível: ${livro.quantidade})
           </label>
           <input type="number" class="form-control mt-1 ms-4 w-25" id="qtdLivro${index}" 
                  value="1" min="1" max="${livro.quantidade}" disabled>
@@ -182,14 +182,21 @@ function pedirDevolucao(clienteId,  pedidoId) {
       clonedForm.addEventListener("submit", function (e) {
         e.preventDefault();
         try {
-          const livrosSelecionados = livros.map((_, index) => {
+          const livrosSelecionados = livros.map((livro, index) => {
             const cb = document.getElementById(`livroCheck${index}`);
             if (cb && cb.checked) {
               const livroId = parseInt(cb.dataset.livroId);
               const qtd = parseInt(document.getElementById(`qtdLivro${index}`).value);
               const qtdMax = parseInt(cb.dataset.max);
               if (qtd < 1 || qtd > qtdMax) throw new Error(`Quantidade inválida para o livro ID ${livroId}`);
-              return { livroId: livroId, quantidade: qtd };
+              return { 
+                ordemLivroId: livro.id,
+                ordemId: pedidoId, 
+                livroId: livroId, 
+                livroTitulo: livro.livroTitulo, 
+                quantidade: qtd, 
+                preco: livro.preco 
+              };
             }
             return null;
           }).filter(item => item !== null);

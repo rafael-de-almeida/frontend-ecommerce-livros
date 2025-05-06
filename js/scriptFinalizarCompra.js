@@ -102,9 +102,9 @@ function exibirResumoCarrinho() {
     }
 
     descontoResumo.textContent = `Desconto(Cupom): R$${(desconto / 100).toFixed(2).replace('.', ',')}`;
-
-    const totalFinal = (frete !== null ? totalProdutos + frete : totalProdutos) - desconto;
+    const totalFinal = Math.max((frete !== null ? totalProdutos + frete : totalProdutos) - desconto, 0);
     totalResumo.innerHTML = `<strong>Total: R$${(totalFinal / 100).toFixed(2).replace('.', ',')}</strong>`;
+    
 
     quantidadeResumo.textContent = `Total de livros: ${totalQuantidadeLivros}`;
 }
@@ -145,8 +145,27 @@ async function validarCupom() {
         
         localStorage.setItem('cupomId', resultado.cupomId || null);
 
-        // Armazenar dados do cupom aplicado
-        descontoCupom = Math.round(parseFloat(resultado.valor) * 100);
+        let precoTotalTexto = document.getElementById("resumo-produtos").textContent.trim();
+        // Extrai "184,70" e converte para número
+        let precoTotal = parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", "."));
+        
+        let valorDesconto = 0;
+        
+        if (resultado.tipo === "PROMOCIONAL") {
+            // valor é percentual. Ex: 10 (%) de R$184,70 = 18470 * 10 / 100
+            const precoTotalEmCentavos = Math.round(parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", ".")) * 100);
+            valorDesconto = Math.round((parseFloat(resultado.valor) / 100) * precoTotalEmCentavos); // em centavos
+            descontoCupom = valorDesconto;
+        } else if (resultado.tipo === "TROCA") {
+            // valor fixo, já em reais, converter para centavos
+            valorDesconto = Math.round(parseFloat(resultado.valor) * 100);
+            descontoCupom = valorDesconto;
+        }
+        
+        
+        // Formatar o valor do desconto para 2 casas decimais
+        
+        
         cupomAplicado = {
             id: resultado.cupomId,
             tipo: resultado.tipo,
