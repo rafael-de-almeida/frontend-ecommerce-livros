@@ -29,16 +29,31 @@ async function buscarOrdens() {
 
     ordens.forEach(ordem => {
       const tr = document.createElement("tr");
-
+      
+      // Usando a função para gerar o badge conforme o status atual
       const statusBadge = gerarBadgeStatus(ordem.status);
 
+      // Criando as opções do select com os badges correspondentes
       const statusOptions = `
         <select class="form-select form-select-sm status-select" data-id="${ordem.numeroPedido}">
-          <option value="EM PROCESSAMENTO" ${ordem.status === "EM PROCESSAMENTO" ? "selected" : ""}>EM PROCESSAMENTO</option>
-          <option value="EM TRANSITO" ${ordem.status === "EM TRANSITO" ? "selected" : ""}>EM TRANSITO</option>
-          <option value="ENTREGUE" ${ordem.status === "ENTREGUE" ? "selected" : ""}>ENTREGUE</option>
-          <option value="EM TROCA" ${ordem.status === "EM TROCA" ? "selected" : ""}>EM TROCA</option>
-          <option value="TROCA AUTORIZADA" ${ordem.status === "TROCA AUTORIZADA" ? "selected" : ""}>TROCA AUTORIZADA</option>
+          <option value="EM PROCESSAMENTO" ${ordem.status === "EM PROCESSAMENTO" ? "selected" : ""}>
+            EM PROCESSAMENTO
+          </option>
+          <option value="EM TRANSITO" ${ordem.status === "EM TRANSITO" ? "selected" : ""}>
+            EM TRANSITO
+          </option>
+          <option value="ENTREGUE" ${ordem.status === "ENTREGUE" ? "selected" : ""}>
+            ENTREGUE
+          </option>
+          <option value="EM TROCA" ${ordem.status === "EM TROCA" ? "selected" : ""}>
+            EM TROCA
+          </option>
+          <option value="TROCA SOLICITADA" ${ordem.status === "TROCA SOLICITADA" ? "selected" : ""}>
+            TROCA SOLICITADA
+          </option>
+          <option value="TROCA AUTORIZADA" ${ordem.status === "TROCA AUTORIZADA" ? "selected" : ""}>
+            TROCA AUTORIZADA
+          </option>
         </select>
       `;
 
@@ -59,6 +74,9 @@ async function buscarOrdens() {
 
       tbody.appendChild(tr);
     });
+
+    // Aplicando os badges aos options após renderizar a tabela
+    aplicarBadgesAosSelects();
 
     // Eventos dos botões "Salvar"
     document.querySelectorAll(".salvar-status").forEach(botao => {
@@ -93,25 +111,94 @@ async function buscarOrdens() {
   }
 }
 
-document.getElementById("form-cliente").addEventListener("submit", function (e) {
-  e.preventDefault();
-  buscarOrdens();
-});
+// Função para aplicar os badges aos options do select usando select2
+function aplicarBadgesAosSelects() {
+  document.querySelectorAll('.status-select').forEach(select => {
+    // Aplicar classes específicas para cada opção
+    const options = select.querySelectorAll('option');
+    options.forEach(option => {
+      // Adicionar atributo de dados para identificar o tipo de status
+      option.setAttribute('data-status', option.value);
+      
+      // Verificar se a biblioteca select2 está disponível (código opcional para melhorar a aparência)
+      if (typeof $ !== 'undefined' && $.fn.select2) {
+        $(select).select2({
+          templateResult: formatStateResult,
+          templateSelection: formatStateSelection
+        });
+      } else {
+        // Alternativa caso não tenha select2 - aplicar estilos diretamente
+        option.style.backgroundColor = getBadgeColorForStatus(option.value);
+        option.style.color = 'white';
+        option.style.padding = '2px 5px';
+        option.style.borderRadius = '3px';
+      }
+    });
+  });
+}
 
-window.addEventListener("DOMContentLoaded", buscarOrdens);
+// Função para formatar a exibição dos itens no dropdown do select2
+function formatStateResult(state) {
+  if (!state.id) return state.text;
+  
+  const status = state.element.value;
+  const $badge = $(`<span class="badge ${getBadgeClassForStatus(status)}">${state.text}</span>`);
+  return $badge;
+}
 
+// Função para formatar a seleção no select2
+function formatStateSelection(state) {
+  if (!state.id) return state.text;
+  
+  const status = state.element.value;
+  return $(`<span class="badge ${getBadgeClassForStatus(status)}">${state.text}</span>`);
+}
 
-function gerarBadgeStatus(status) {
+// Função para obter a classe do badge baseado no status
+function getBadgeClassForStatus(status) {
   const statusLower = status.toLowerCase();
-  if (statusLower === "entregue" || statusLower === "pago") {
-    return `<span class="badge bg-success">${status}</span>`;
-  } else if (statusLower === "pendente" || statusLower === "em processamento") {
-    return `<span class="badge bg-warning">${status}</span>`;
-  } else if (statusLower === "cancelado") {
-    return `<span class="badge bg-danger">${status}</span>`;
+  
+  if (statusLower === "entregue") {
+    return "bg-success";
+  } else if (statusLower === "em processamento") {
+    return "bg-warning";
+  } else if (statusLower === "em transito") {
+    return "bg-info";
+  } else if (statusLower === "em troca") {
+    return "bg-danger";
+  } else if (statusLower === "troca solicitada") {
+    return "bg-secondary";
+  } else if (statusLower === "troca autorizada") {
+    return "bg-primary";
   } else {
-    return `<span class="badge bg-secondary">${status}</span>`;
+    return "bg-dark";
   }
+}
+
+// Função para obter a cor do badge baseado no status (para uso sem select2)
+function getBadgeColorForStatus(status) {
+  const statusLower = status.toLowerCase();
+  
+  if (statusLower === "entregue") {
+    return "#198754"; // verde
+  } else if (statusLower === "em processamento") {
+    return "#ffc107"; // amarelo
+  } else if (statusLower === "em transito") {
+    return "#0dcaf0"; // azul claro
+  } else if (statusLower === "em troca") {
+    return "#dc3545"; // vermelho
+  } else if (statusLower === "troca solicitada") {
+    return "#6c757d"; // cinza
+  } else if (statusLower === "troca autorizada") {
+    return "#0d6efd"; // azul
+  } else {
+    return "#212529"; // preto
+  }
+}
+
+// Função para gerar o badge HTML baseado no status atual
+function gerarBadgeStatus(status) {
+  return `<span class="badge ${getBadgeClassForStatus(status)}">${status}</span>`;
 }
 
 document.getElementById("form-cliente").addEventListener("submit", function (e) {
@@ -119,4 +206,17 @@ document.getElementById("form-cliente").addEventListener("submit", function (e) 
   buscarOrdens();
 });
 
-window.addEventListener("DOMContentLoaded", buscarOrdens);
+window.addEventListener("DOMContentLoaded", () => {
+  buscarOrdens();
+  
+  // Adicionar listeners para mudança de select que atualizem visualmente o badge
+  document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('status-select')) {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      const statusCell = e.target.closest('tr').querySelector('td:nth-child(6)');
+      if (statusCell) {
+        statusCell.innerHTML = gerarBadgeStatus(selectedOption.value);
+      }
+    }
+  });
+});

@@ -1,10 +1,9 @@
 const urlParams = new URLSearchParams(window.location.search);
 let clienteId = urlParams.get('id'); // pega o id da URL
 
- document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".container");
 
-  
   fetch(`http://localhost:8080/site/clientes/pedido/get/${clienteId}`)
     .then(response => {
       if (!response.ok) throw new Error("Erro ao buscar pedidos.");
@@ -44,23 +43,45 @@ let clienteId = urlParams.get('id'); // pega o id da URL
         const badgeClass = statusCor(pedido.status);
 
         const botaoTroca = pedido.status === "ENTREGUE"
-          ? `<button class="btn btn-danger mt-2" onclick="pedirDevolucao(${pedido.id})">Pedir Troca</button>`
+          ? `<button class="btn btn-danger mt-2" onclick="pedirDevolucao(${clienteId}, ${pedido.id})">Pedir Troca</button>`
           : "";
-
-        card.innerHTML = `
-          <div class="card-body">
-            <h5 class="card-title">Pedido #${pedido.id}</h5>
-            <p class="card-text">Data: ${pedido.data}</p>
-            <p class="card-text">Valor Total: R$ ${pedido.precoTotal.toFixed(2)}</p>
-            <span class="badge ${badgeClass}">${statusFormatado}</span>
-            <ul class="mt-3">
-              ${livrosHtml}
-            </ul>
-            ${botaoTroca}
-          </div>
-        `;
+        
+          if (pedido.status === "TROCA AUTORIZADA") {
+            pegarcodigocupom(pedido.id).then(codigoCupom => {
+              card.innerHTML = `
+                <div class="card-body">
+                  <h5 class="card-title">Pedido #${pedido.id}</h5>
+                  <p class="card-text">Data: ${pedido.data}</p>
+                  <p class="card-text">Valor Total: R$ ${pedido.precoTotal.toFixed(2)}</p>
+                  <p class="card-text">Código do cupom: ${codigoCupom}</p>
+                  <span class="badge ${badgeClass}">${statusFormatado}</span>
+                  <ul class="mt-3">
+                    ${livrosHtml}
+                  </ul>
+                  ${botaoTroca}
+                </div>
+              `;
+              container.appendChild(card);
+            }).catch(error => {
+              console.error("Erro ao buscar código do cupom:", error);
+            });  
+          }
+          else{
+            card.innerHTML = `
+            <div class="card-body">
+              <h5 class="card-title">Pedido #${pedido.id}</h5>
+              <p class="card-text">Data: ${pedido.data}</p>
+              <p class="card-text">Valor Total: R$ ${pedido.precoTotal.toFixed(2)}</p>
+              <span class="badge ${badgeClass}">${statusFormatado}</span>
+              <ul class="mt-3">
+                ${livrosHtml}
+              </ul>
+              ${botaoTroca}
+            </div>
+          `;
 
         container.appendChild(card);
+        }
       });
     })
     .catch(error => {
@@ -68,7 +89,19 @@ let clienteId = urlParams.get('id'); // pega o id da URL
       container.innerHTML += `<p class="text-danger">Não foi possível carregar o histórico de pedidos.</p>`;
     });
 });
-
+function pegarcodigocupom(pedidoId) {
+return fetch(`http://localhost:8080/api/cupons/buscar-por-origem-troca/${pedidoId}`)
+.then(response => {
+  if (!response.ok) throw new Error("Erro ao buscar cupom.");
+  return response.json();
+})
+.then(data => {
+  const codigo = data.codigo;
+  console.log(codigo);
+  return codigo;
+});
+  
+}
 // Define a cor da badge de status
 function statusCor(status) {
   switch (status) {
@@ -87,7 +120,115 @@ function statusCor(status) {
   }
 }
 
-// Função de troca (exemplo)
-function pedirDevolucao(pedidoId) {
-  alert(`Solicitação de troca para o pedido #${pedidoId} enviada.`);
+function pedirDevolucao(clienteId,  pedidoId) {
+  // Usar o modal existente no HTML em vez de criar um novo
+  const modalTroca = document.getElementById('modalTroca');
+  const modalCorpoTroca = document.getElementById('modalCorpoTroca');
+  const modalTituloTroca = document.getElementById('modalTituloTroca');
+  
+  // Atualizar o título do modal com o ID do pedido
+  modalTituloTroca.textContent = `Solicitar Troca - Pedido #${pedidoId}`;
+  
+  // Limpar o conteúdo atual do modal
+  modalCorpoTroca.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div></div>';
+  
+  // Mostrar o modal enquanto carrega os dados
+  const modal = new bootstrap.Modal(modalTroca);
+  modal.show();
+
+  fetch(`http://localhost:8080/site/clientes/pedido/get/${clienteId}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Erro ao buscar livros do pedido.");
+      return response.json();
+    })
+    .then(livros => {
+      console.log("Livros recebidos:", livros);
+    
+      if (!Array.isArray(livros) || livros.length === 0) {
+        modalCorpoTroca.innerHTML = '<div class="alert alert-warning">Este pedido não possui livros disponíveis para troca.</div>';
+        return;
+      }
+
+      // Preencher o corpo do modal com os livros
+      modalCorpoTroca.innerHTML = livros.map((livro, index) => `
+        <div class="form-check mb-2">
+          <input class="form-check-input me-2" type="checkbox" id="livroCheck${index}" 
+                 data-livro-id="${livro.livroId}" data-max="${livro.quantidade}">
+          <label class="form-check-label" for="livroCheck${index}">
+            ${livro.titulo} - R$ ${livro.preco.toFixed(2)} (Qtd disponível: ${livro.quantidade})
+          </label>
+          <input type="number" class="form-control mt-1 ms-4 w-25" id="qtdLivro${index}" 
+                 value="1" min="1" max="${livro.quantidade}" disabled>
+        </div>
+      `).join("");
+
+      // Configurar os listeners para os checkboxes
+      livros.forEach((_, index) => {
+        const cb = document.getElementById(`livroCheck${index}`);
+        const inputQtd = document.getElementById(`qtdLivro${index}`);
+        if (cb && inputQtd) {
+          cb.addEventListener("change", () => {
+            inputQtd.disabled = !cb.checked;
+          });
+        }
+      });
+
+      // Configurar o evento de submissão do formulário
+      const formTroca = document.getElementById("formTroca");
+      // Remover qualquer handler existente para evitar duplicação
+      const clonedForm = formTroca.cloneNode(true);
+      formTroca.parentNode.replaceChild(clonedForm, formTroca);
+      
+      clonedForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        try {
+          const livrosSelecionados = livros.map((_, index) => {
+            const cb = document.getElementById(`livroCheck${index}`);
+            if (cb && cb.checked) {
+              const livroId = parseInt(cb.dataset.livroId);
+              const qtd = parseInt(document.getElementById(`qtdLivro${index}`).value);
+              const qtdMax = parseInt(cb.dataset.max);
+              if (qtd < 1 || qtd > qtdMax) throw new Error(`Quantidade inválida para o livro ID ${livroId}`);
+              return { livroId: livroId, quantidade: qtd };
+            }
+            return null;
+          }).filter(item => item !== null);
+
+          if (livrosSelecionados.length === 0) {
+            alert("Selecione ao menos um livro para troca.");
+            return;
+          }
+
+          const trocaDTO = {
+            ordemOriginalId: clienteId,
+            livrosParaTroca: livrosSelecionados
+          };
+
+          // Corrigido o endpoint para a solicitação de troca
+          fetch(`http://localhost:8080/site/clientes/pedido/troca`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(trocaDTO)
+          })
+            .then(res => {
+              if (!res.ok) throw new Error("Erro ao enviar solicitação de troca.");
+              return res.text();
+            })
+            .then(msg => {
+              alert(msg);
+              modal.hide();
+              // Recarregar a página para atualizar o status dos pedidos
+              window.location.reload();
+            })
+            .catch(err => {
+              alert("Erro: " + err.message);
+            });
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+    })
+    .catch(err => {
+      modalCorpoTroca.innerHTML = `<div class="alert alert-danger">Erro ao carregar itens do pedido: ${err.message}</div>`;
+    });
 }
