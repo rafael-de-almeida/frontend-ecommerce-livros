@@ -530,7 +530,7 @@ if (cupomId) {
     }
 } else {
     console.error("Cupom não encontrado no localStorage");
-    alert("Não há cupom aplicado.");
+    console.log("Nenhum cupom foi utilizado nesta compra.");
 }
 }
 function mostrarModalSucesso(mensagem) {
