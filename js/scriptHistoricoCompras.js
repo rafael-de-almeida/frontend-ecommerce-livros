@@ -161,15 +161,22 @@ function pedirDevolucao(clienteId, pedidoId) {
       `).join("");
 
       // Ativar/desativar campos de quantidade conforme checkbox
-      livros.forEach((_, index) => {
-        const cb = document.getElementById(`livroCheck${index}`);
-        const inputQtd = document.getElementById(`qtdLivro${index}`);
-        if (cb && inputQtd) {
-          cb.addEventListener("change", () => {
-            inputQtd.disabled = !cb.checked;
-          });
-        }
-      });
+      setTimeout(() => {
+        livros.forEach((_, index) => {
+          const cb = document.getElementById(`livroCheck${index}`);
+          const inputQtd = document.getElementById(`qtdLivro${index}`);
+          if (cb && inputQtd) {
+            cb.addEventListener("change", () => {
+              inputQtd.disabled = !cb.checked;
+              if (cb.checked) {
+                inputQtd.focus();
+              } else {
+                inputQtd.value = "1";
+              }
+            });
+          }
+        });
+      }, 0);
 
       // Preparar o envio
       const formTroca = document.getElementById("formTroca");
