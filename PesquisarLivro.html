@@ -1,39 +1,96 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <title>Livros e Estoque</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesquisar Livro</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* Garante que a tabela ocupe toda a largura disponível */
+.table {
+  width: 100%;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+/* Centraliza o conteúdo das células */
+.table th,
+.table td {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+/* Reduz o padding para melhor aproveitamento do espaço */
+.table th,
+.table td {
+  padding: 0.5rem;
+}
+
+/* Define largura mínima para colunas críticas */
+.table th:nth-child(4), /* Título */
+.table td:nth-child(4) {
+  min-width: 120px;
+}
+
+/* Ajusta a coluna de ações */
+.table th:last-child,
+.table td:last-child {
+  width: 90px;
+}
+
+/* Deixa o cabeçalho com destaque */
+.table thead {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.table th,
+.table td {
+  white-space: nowrap;     /* Impede quebra de linha */
+  overflow: hidden;        /* Oculta texto que passar do limite */
+  text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+  vertical-align: middle;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Se quiser permitir quebra controlada em colunas maiores como "título": */
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  white-space: normal; /* Permite quebra de linha */
+  word-break: break-word;
+}
+
+
+  </style>
 </head>
 <body>
+
+  
   <nav class="navbar navbar-expand-lg navbar-light bg-custom border-bottom">
     <div class="container-fluid">
       <a class="navbar-brand">
         <img class="navbar-icone rounded-circle" src="assets/images.png" alt="">
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="pesquisarUsuario.html">Pesquisar Clientes</a></li>
           <li class="nav-item"><a class="nav-link" href="CadastroCliente.html">Inserir Clientes</a></li>
           <li class="nav-item"><a class="nav-link" href="pesquisarVendas.html">Pesquisar Vendas</a></li>
-          <li class="nav-item"><a class="nav-link" href="PesquisarLivro.html">Pesquisar Livros</a></li>
+          <li class="nav-item"><a class="nav-link active fw-bold" href="PesquisarLivro.html">Pesquisar Livros</a></li>
           <li class="nav-item"><a class="nav-link" href="historicoVendas.html">Histórico de Vendas</a></li>
         </ul>
-  
         <div class="dropdown d-flex align-items-center">
-          <img src="assets/7662778-jovem-bonito-homem-gerente-executivo-de-terno-elegante-posando-contra-fundo-cinza-gratis-foto.jpg"
-               alt="Imagem" class="rounded-circle me-2" width="40" height="40">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                  aria-expanded="false" style="padding: 5px 10px;"></button>
+          <img src="assets/7662778-jovem-bonito-homem-gerente-executivo-de-terno-elegante-posando-contra-fundo-cinza-gratis-foto.jpg" class="rounded-circle me-2" width="40" height="40">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="telaInicial.html">Sair</a></li>
           </ul>
@@ -42,120 +99,196 @@
     </div>
   </nav>
 
-  <div class="container-fluid mt-4">
+  <!-- Conteúdo Principal -->
+  <div class="container mt-4">
     <div class="row">
+      <!-- Filtro à Esquerda -->
       <div class="col-md-4">
-        <div class="card p-3">
-          <h2 class="mb-3">Encontrar Livro </h2>
+        <div class="card p-4 mb-4">
+          <h4 class="mb-3">Filtrar Livros</h4>
           <form id="form-cliente">
             <div class="mb-3">
-              <label for="autor" class="form-label">Autor</label>
-              <input type="text" name="autor" id="autor" class="form-control" >
-            </div>
-            <div class="row mb-3">
-              <div class="col">
-                <label for="categoria" class="form-label">Categoria</label>
-                <input type="text" name="categoria" id="categoria" class="form-control" >
-              </div>
-              <div class="col">
-                <label for="ano" class="form-label">Ano</label>
-                <input type="text" name="ano" id="ano" class="form-control" >
-              </div>
-            </div>
-            <div class="mb-3">
               <label for="titulo" class="form-label">Título</label>
-              <input type="text" name="titulo" id="titulo" class="form-control" >
+              <input type="text" id="titulo" class="form-control">
             </div>
             <div class="mb-3">
-              <label for="editora" class="form-label">Editora</label>
-              <input type="text" name="editora" id="editora" class="form-control" >
+              <label for="autor" class="form-label">Autor</label>
+              <input type="text" id="autor" class="form-control">
             </div>
             <div class="mb-3">
-              <label for="isbn" class="form-label">ISBN</label>
-              <input type="text" name="isbn" id="isbn" class="form-control">
+              <label for="categoria" class="form-label">Categoria</label>
+              <input type="text" id="categoria" class="form-control">
             </div>
             <div class="mb-3">
-              <label for="paginas" class="form-label">Número de páginas</label>
-              <input type="text" name="paginas" id="paginas" class="form-control" >
+              <label for="ano" class="form-label">Ano</label>
+              <input type="number" id="ano" class="form-control">
             </div>
-            <div class="mb-3">
-              <label for="codigoBarras" class="form-label">Código de Barras</label>
-              <input type="text" name="codigoBarras" id="codigoBarras" class="form-control" >
-            </div>
-            
-            <button type="submit" class="btn btn-primary w-100">
-              Pesquisar Livro
-            </button>
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Buscar</button>
           </form>
         </div>
       </div>
 
+      <!-- Lista de Livros à Direita -->
       <div class="col-md-8">
         <div class="card p-3">
-          <h2>Detalhes do Livro</h2>
-          <div class="table-responsive custom-scroll">
-            <table class="table table-striped" id="dataTable">
-              <thead>
-                <tr>
-                  <th>Autor</th>
-                  <th>Categoria</th>
-                  <th>Ano</th>
-                  <th>Título</th>
-                  <th>Editora</th>
-                  <th>ISBN</th>
-                  <th>Número de páginas</th>
-                  <th>Código de barras</th>
-                  <th>Quantidade</th>
-                  <th>Ações</th>
-                  
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>J.R.R. Tolkien</td>
-                  <td>Fantasia, Aventura</td>
-                  <td>1954</td>
-                  <td>O Senhor dos Anéis: A Sociedade do Anel</td>
-                  <td>Martins Fontes</td>
-                  <td>978-85-336-1123-5</td>
-                  <td>432</td>
-                  <td>Médio</td>
-                  <td>9788533611235</td>
-                  <td>
-                    <div class="d-flex flex-column align-items-center">
-                      <button class="btn btn-outline-dark btn-sm btn-qtd" data-action="aumentar" style="width: 60px;">
-                        <i class="bi bi-plus-lg"></i>
-                      </button>
-                      <input type="number" class="form quantidade" value="1" min="1" style="width: 60px; height: 35px; font-size: 16px; text-align: center;">
-                      <button class="btn btn-outline-dark btn-sm btn-qtd" data-action="diminuir" style="width: 60px;">
-                        <i class="bi bi-dash-lg"></i>
-                      </button>
-                    </div>
-                  </td>
-                  
-                  
-                  
-                  
-                  <td>
-                    <div class="d-flex gap-2">
-                      <button class="btn btn-success btn-sm">Editar</button>
-                    </div>
-                    
-                  </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <h5 class="mb-3">Lista de Livros</h5>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Autor</th>
+                <th>Categoria</th>
+                <th>Ano</th>
+                <th>Título</th>
+                <th>Editora</th>
+                <th>ISBN</th>
+                <th>Páginas</th>
+                <th>Cód. Barras</th>
+                <th>Qtd. Estoque</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-
     </div>
   </div>
-  <footer class="bg-custom text-white text-center py-3 mt-4">
-    <p>&copy; 2025 Entre Páginas. Todos os direitos reservados.</p>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/ScriptPesquisarLivro.js"></script>
+
+  <!-- Modal Entrada de Estoque -->
+  <div class="modal fade" id="modalEntradaEstoque" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content" id="formEstoque">
+        <div class="modal-header">
+          <h5 class="modal-title">Entrada de Estoque</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="idLivroEstoque">
+          <div class="mb-2">
+            <label class="form-label">Data de Entrada</label>
+            <input type="date" id="dataEntrada" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Fornecedor</label>
+            <input type="text" id="fornecedor" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Quantidade</label>
+            <input type="number" id="quantidade" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Valor de Custo</label>
+            <input type="number" step="0.01" id="valorDeCusto" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Salvar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    const getLivrosUrl = 'http://localhost:8080/site/livros';
+
+    async function postLivros(event) {
+      if (event) event.preventDefault();
+
+      const filtros = {
+        autor: document.getElementById('autor').value.trim(),
+        categoria: document.getElementById('categoria').value.trim(),
+        ano: document.getElementById('ano').value.trim(),
+        titulo: document.getElementById('titulo').value.trim()
+      };
+
+      const queryParams = Object.entries(filtros)
+        .filter(([_, v]) => v !== '')
+        .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+
+      const searchUrl = queryParams ? `${getLivrosUrl}?${queryParams}` : getLivrosUrl;
+
+      try {
+        const response = await fetch(searchUrl);
+        if (!response.ok) throw new Error('Erro ao buscar livros');
+        const livros = await response.json();
+        preencherTabela(livros);
+      } catch (erro) {
+        console.error(erro);
+        alert('Erro ao buscar livros.');
+      }
+    }
+
+    function preencherTabela(livros) {
+      const corpoTabela = document.querySelector('tbody');
+      corpoTabela.innerHTML = '';
+
+      livros.forEach(livro => {
+        const linha = document.createElement('tr');
+        linha.innerHTML = `
+          <td>${livro.LIV_AUTOR || ''}</td>
+          <td>${livro.livCategoria || ''}</td>
+          <td>${livro.livAno || ''}</td>
+          <td>${livro.livTitulo || ''}</td>
+          <td>${livro.LIV_EDITORA || ''}</td>
+          <td>${livro.LIV_ISBN || ''}</td>
+          <td>${livro.LIV_QTD_PAGINAS || ''}</td>
+          <td>${livro.liv_cod_barras || ''}</td>
+          <td id="qtd-${livro.livId}">Carregando...</td>
+          <td><button class="btn btn-sm btn-primary" onclick="abrirEntradaEstoque(${livro.livId})">Entrada</button></td>
+        `;
+        corpoTabela.appendChild(linha);
+
+        fetch(`http://localhost:8080/site/estoque/get`)
+          .then(resp => resp.json())
+          .then(estoques => {
+            const estoqueLivro = estoques.filter(e => e.idLivro === livro.livId);
+            const total = estoqueLivro.reduce((t, e) => t + e.quantidade, 0);
+            document.getElementById(`qtd-${livro.livId}`).innerText = total;
+          });
+      });
+    }
+
+    function abrirEntradaEstoque(idLivro) {
+      document.getElementById('idLivroEstoque').value = idLivro;
+      const modal = new bootstrap.Modal(document.getElementById('modalEntradaEstoque'));
+      modal.show();
+    }
+
+    document.getElementById('formEstoque').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const estoque = {
+        idLivro: parseInt(document.getElementById('idLivroEstoque').value),
+        dataEntrada: document.getElementById('dataEntrada').value,
+        fornecedor: document.getElementById('fornecedor').value,
+        quantidade: parseInt(document.getElementById('quantidade').value),
+        valorDeCusto: parseFloat(document.getElementById('valorDeCusto').value)
+      };
+
+      try {
+        const resp = await fetch("http://localhost:8080/site/estoque/post", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(estoque)
+        });
+
+        if (!resp.ok) throw new Error("Erro ao cadastrar estoque");
+
+        alert("Estoque cadastrado com sucesso!");
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEntradaEstoque'));
+        modal.hide();
+        postLivros();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao cadastrar estoque.");
+      }
+    });
+
+    document.getElementById('form-cliente').addEventListener('submit', postLivros);
+    document.addEventListener('DOMContentLoaded', () => postLivros());
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
