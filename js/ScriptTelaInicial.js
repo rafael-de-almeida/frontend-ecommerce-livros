@@ -119,6 +119,9 @@ function passarIdHistoricoCompras () {
 function passarIdEndereco () {
     window.location.href = `enderecos.html?id=${id}`;
 }
+function passarIdTelaInicial(){
+    window.location.href = `telaInicial.html?id=${id}`;
+}
 
 function passarIdCarrinho() {
     window.location.href = `Carrinho.html?id=${id}`;

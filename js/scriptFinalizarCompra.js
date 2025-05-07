@@ -456,7 +456,6 @@ async function finalizarCompra() {
     const urlParams = new URLSearchParams(window.location.search);
     const clienteId = parseInt(urlParams.get('id'));
 
-    // Extrai valor do total (em centavos)
     const totalTexto = document.getElementById("resumo-total").textContent;
     const precoTotalCentavos = Number(totalTexto.replace(/\D/g, ''));
     const precoTotal = parseFloat((precoTotalCentavos / 100).toFixed(2));
@@ -472,7 +471,7 @@ async function finalizarCompra() {
         status: "EM PROCESSAMENTO"
     }));
 
-    const dataAtual = new Date().toISOString().split("T")[0]; // formato: "YYYY-MM-DD"
+    const dataAtual = new Date().toISOString().split("T")[0];
 
     const body = {
         precoTotal: precoTotal,
@@ -495,44 +494,34 @@ async function finalizarCompra() {
 
         if (!response.ok) throw new Error("Erro ao finalizar compra");
 
-        const result = await response.text();
+        await response.text(); // você não usa `result.mensagem`, então pode até remover isso
+
+        const cupomId = localStorage.getItem("cupomId");
+
+        if (cupomId) {
+            const cupomResponse = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ cupomId: cupomId })
+            });
+
+            if (!cupomResponse.ok) throw new Error("Erro ao finalizar uso do cupom");
+
+            localStorage.removeItem("cupomId");
+        }
+
         localStorage.removeItem("carrinho");
-        mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
-        
+        mostrarModalSucesso("Compra finalizada com sucesso!");
+
     } catch (error) {
         console.error("Erro ao finalizar compra:", error);
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
+        localStorage.removeItem("cupomId"); // mesmo se der erro, limpa
     }
-
-    const cupomId = localStorage.getItem("cupomId");
-
-if (cupomId) {
-    try {
-        const response = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ cupomId: cupomId })
-        });
-
-        if (!response.ok) throw new Error("Erro ao finalizar compra");
-
-        const result = await response.json();
-        localStorage.removeItem("carrinho");
-        mostrarModalSucesso(result.mensagem || "Compra finalizada com sucesso!");
-
-        localStorage.removeItem("cupomId");
-    } catch (error) {
-        console.error("Erro ao finalizar compra:", error);
-        alert("Houve um problema ao finalizar a compra. Tente novamente.");
-        localStorage.removeItem("cupomId");
-    }
-} else {
-    console.error("Cupom não encontrado no localStorage");
-    console.log("Nenhum cupom foi utilizado nesta compra.");
 }
-}
+
 function mostrarModalSucesso(mensagem) {
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id');
@@ -567,13 +556,17 @@ function mostrarModalSucesso(mensagem) {
           alert("Nenhum pedido encontrado.");
         }
       })
+      
       .catch(error => {
         console.error(error);
         alert("Erro ao buscar o pedido.");
       });
   }
-  
-  
-  
 
+  function passarIdHistoricoCompras() {
+    window.location.href = `historicoCompras.html?id=2`;
+}
 
+function passarIdTelaInicial() {
+    window.location.href = `telaInicial.html?id=2`;
+}

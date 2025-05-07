@@ -237,3 +237,16 @@ function pedirDevolucao(clienteId, pedidoId) {
       modalCorpoTroca.innerHTML = `<div class="alert alert-danger">Erro ao carregar itens do pedido: ${err.message}</div>`;
     });
 }
+
+function passarIdCartao() {
+  window.location.href = `cartoes.html?id=${clienteId}`;
+}
+function passarIdHistoricoCompras() {
+  window.location.href = `historicoCompras.html?id=${clienteId}`;
+}
+function passarIdEndereco() {
+  window.location.href = `enderecos.html?id=${clienteId}`;
+}
+function passarIdTelaInicial() {
+  window.location.href = `telaInicial.html?id=${clienteId}`;
+}
