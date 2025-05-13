@@ -23,6 +23,7 @@ window.onload = function () {
 };
 function exibirResumoCarrinho() {
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    const cuponsAplicados = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
 
     const container = document.querySelector('.mini-products');
     const produtosResumo = document.getElementById('resumo-produtos');
@@ -34,9 +35,7 @@ function exibirResumoCarrinho() {
     const enderecoSelecionado = document.getElementById('endereco-selecionado');
 
     const enderecoValido = enderecoSelecionado && enderecoSelecionado.value?.trim() !== "";
-
     const fretePadrao = 2000;
-    const desconto = typeof descontoCupom !== 'undefined' ? descontoCupom : 0;
     const limiteFreteGratis = 15000;
 
     let totalProdutos = 0;
@@ -57,11 +56,6 @@ function exibirResumoCarrinho() {
             };
         } else {
             livrosAgrupados[livro.livTitulo].quantidade += quantidade;
-            if (livrosAgrupados[livro.livTitulo].precoCentavos !== precoCentavos) {
-                livrosAgrupados[livro.livTitulo].precoCentavos = Math.round(
-                    (livrosAgrupados[livro.livTitulo].precoCentavos + precoCentavos) / 2
-                );
-            }
         }
     });
 
@@ -82,15 +76,14 @@ function exibirResumoCarrinho() {
         container.appendChild(col);
     });
 
-    let frete = 0;
-    if (enderecoValido) {
-        frete = totalProdutos > limiteFreteGratis ? 0 : fretePadrao;
-    } else {
-        frete = null;
-    }
+    // Define frete
+    let frete = enderecoValido ? (totalProdutos > limiteFreteGratis ? 0 : fretePadrao) : null;
+
+    // Cálculo de desconto com cupons
+    let desconto = cuponsAplicados.reduce((total, cupom) => total + (cupom.valor || 0), 0);
 
     produtosResumo.textContent = `Produtos: R$${(totalProdutos / 100).toFixed(2).replace('.', ',')}`;
-
+    
     if (frete !== null) {
         const freteTexto = frete === 0 ? "Frete: Grátis" : `Frete: R$${(frete / 100).toFixed(2).replace('.', ',')}`;
         freteResumo.textContent = freteTexto;
@@ -101,23 +94,47 @@ function exibirResumoCarrinho() {
         if (freteLabel) freteLabel.textContent = msg;
     }
 
-    descontoResumo.textContent = `Desconto(Cupom): R$${(desconto / 100).toFixed(2).replace('.', ',')}`;
+    // Mostrar cupons aplicados com botões para excluir
+    if (cuponsAplicados.length > 0) {
+        let html = `<strong>Descontos aplicados:</strong><br>`;
+        cuponsAplicados.forEach((cupom, index) => {
+            let valorReais = (cupom.valor / 100).toFixed(2).replace('.', ',');
+            html += `
+        <div style="margin-bottom: 16px;">
+            <div><strong>Cupom ${cupom.codigo}</strong> (${cupom.tipo}): -R$${valorReais}</div>
+            <button class="btn btn-sm btn-danger mt-1" onclick="removerCupom(${index})">Remover</button>
+        </div>
+            `;
+        });
+        html += `<br><strong>Total desconto: R$${(desconto / 100).toFixed(2).replace('.', ',')}</strong>`;
+        descontoResumo.innerHTML = html;
+    } else {
+        descontoResumo.textContent = "Desconto(Cupom): R$0,00";
+    }
+
     const totalFinal = Math.max((frete !== null ? totalProdutos + frete : totalProdutos) - desconto, 0);
     totalResumo.innerHTML = `<strong>Total: R$${(totalFinal / 100).toFixed(2).replace('.', ',')}</strong>`;
-    
-
     quantidadeResumo.textContent = `Total de livros: ${totalQuantidadeLivros}`;
 }
 
+// Função para remover um cupom e atualizar o resumo
+function removerCupom(index) {
+    const cupons = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
+    cupons.splice(index, 1); // remove o cupom pelo índice
+    localStorage.setItem('cuponsAplicados', JSON.stringify(cupons));
+    exibirResumoCarrinho(); // atualiza o resumo
+}
+
+
+let cuponsAplicados = []; // lista de cupons aplicados
 let descontoCupom = 0;
-let cupomAplicado = null;
 
 async function validarCupom() {
     const codigoCupom = document.getElementById("input-cupom").value.trim();
     const mensagem = document.getElementById("resumo-desconto");
     const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
-  
+    const id = urlParams.get('id');
+
     if (!codigoCupom) {
         mensagem.textContent = "Digite um código de cupom.";
         mensagem.classList.remove("text-success");
@@ -133,7 +150,7 @@ async function validarCupom() {
             },
             body: JSON.stringify({
                 codigo: codigoCupom,
-                clienteId: id  // certifique-se que isso está definido
+                clienteId: id
             })
         });
 
@@ -142,51 +159,77 @@ async function validarCupom() {
         if (!response.ok || !resultado.valido) {
             throw new Error(resultado.mensagem || "Cupom inválido.");
         }
-        
-        localStorage.setItem('cupomId', resultado.cupomId || null);
 
+        // Captura preço total atual dos produtos
         let precoTotalTexto = document.getElementById("resumo-produtos").textContent.trim();
-        // Extrai "184,70" e converte para número
-        let precoTotal = parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", "."));
-        
-        let valorDesconto = 0;
-        
-        if (resultado.tipo === "PROMOCIONAL") {
-            // valor é percentual. Ex: 10 (%) de R$184,70 = 18470 * 10 / 100
-            const precoTotalEmCentavos = Math.round(parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", ".")) * 100);
-            valorDesconto = Math.round((parseFloat(resultado.valor) / 100) * precoTotalEmCentavos); // em centavos
-            descontoCupom = valorDesconto;
-        } else if (resultado.tipo === "TROCA") {
-            // valor fixo, já em reais, converter para centavos
-            valorDesconto = Math.round(parseFloat(resultado.valor) * 100);
-            descontoCupom = valorDesconto;
+        let precoTotal = parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", ".")) * 100;
+
+        // Recupera cupons já aplicados
+        let cuponsAplicados = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
+
+        // Verifica se o cupom já foi aplicado
+        if (cuponsAplicados.some(c => c.codigo === codigoCupom)) {
+            mensagem.textContent = `O cupom "${codigoCupom}" já foi aplicado.`;
+            mensagem.classList.remove("text-success");
+            mensagem.classList.add("text-danger");
+            return;
         }
-        
-        
-        // Formatar o valor do desconto para 2 casas decimais
-        
-        
-        cupomAplicado = {
+
+        // Verifica se já há um cupom promocional
+        if (resultado.tipo === "PROMOCIONAL" && cuponsAplicados.some(c => c.tipo === "PROMOCIONAL")) {
+            mensagem.textContent = "Você só pode aplicar um cupom promocional por compra.";
+            mensagem.classList.remove("text-success");
+            mensagem.classList.add("text-danger");
+            return;
+        }
+
+        // Calcula valor do novo cupom
+        let novoValorCupom = 0;
+        if (resultado.tipo === "PROMOCIONAL") {
+            novoValorCupom = Math.round((parseFloat(resultado.valor) / 100) * precoTotal);
+        } else if (resultado.tipo === "TROCA") {
+            novoValorCupom = Math.round(parseFloat(resultado.valor) * 100);
+        }
+
+        // Soma total de cupons aplicados
+        let valorTotalCupons = cuponsAplicados.reduce((soma, cupom) => soma + cupom.valor, 0);
+
+        // Verifica se cupom excede valor da compra
+        if (valorTotalCupons + novoValorCupom > precoTotal) {
+            mensagem.textContent = "O valor total dos cupons não pode ultrapassar o valor da compra.";
+            mensagem.classList.remove("text-success");
+            mensagem.classList.add("text-danger");
+            return;
+        }
+
+        // Adiciona novo cupom
+        cuponsAplicados.push({
             id: resultado.cupomId,
             tipo: resultado.tipo,
-            valor: descontoCupom
-        };
+            valor: novoValorCupom,
+            codigo: codigoCupom
+        });
 
-        mensagem.textContent = resultado.mensagem;
+        localStorage.setItem('cuponsAplicados', JSON.stringify(cuponsAplicados));
+
+        // Atualiza desconto total
+        descontoCupom = valorTotalCupons + novoValorCupom;
+
+        mensagem.textContent = "Cupom aplicado com sucesso!";
         mensagem.classList.remove("text-danger");
         mensagem.classList.add("text-success");
 
         exibirResumoCarrinho();
     } catch (error) {
-        descontoCupom = 0;
-        cupomAplicado = null;
         mensagem.textContent = error.message || "Erro ao validar o cupom.";
         mensagem.classList.remove("text-success");
         mensagem.classList.add("text-danger");
-
         exibirResumoCarrinho();
     }
 }
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const inputCupom = document.getElementById("input-cupom");
 
@@ -197,22 +240,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const codigo = inputCupom.value.trim();
 
             if (codigo === "") {
-                // Cancelar cupom
-                descontoCupom = 0;
-                cupomAplicado = null;
-
+                // Só atualiza o resumo, sem alterar cupons
                 const mensagem = document.getElementById("resumo-desconto");
-                mensagem.textContent = "Cupom removido.";
-                mensagem.classList.remove("text-success");
-                mensagem.classList.add("text-danger");
-
-                exibirResumoCarrinho(); // atualiza o total sem desconto
+                mensagem.textContent = "Digite um código de cupom.";
+                mensagem.classList.remove("text-success", "text-danger");
+                exibirResumoCarrinho();
             } else {
-                validarCupom(); // se não estiver vazio, tenta validar o cupom
+                validarCupom();
             }
         }
     });
 });
+
+
 
 // Cria um novo select de cartão (com botão cancelar)
 let id = 2;
@@ -497,29 +537,32 @@ async function finalizarCompra() {
 
         await response.text(); // você não usa `result.mensagem`, então pode até remover isso
 
-        const cupomId = localStorage.getItem("cupomId");
+        const cuponsAplicados = JSON.parse(localStorage.getItem("cuponsAplicados")) || [];
+        const cuponsIds = cuponsAplicados.map(cupom => cupom.id).filter(id => id !== undefined);
 
-        if (cupomId) {
-            const cupomResponse = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ cupomId: cupomId })
-            });
+        if (cuponsIds.length > 0) {
+        const cupomResponse = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ cuponsIds: cuponsIds })
+        });
 
-            if (!cupomResponse.ok) throw new Error("Erro ao finalizar uso do cupom");
+            if (!cupomResponse.ok) throw new Error("Erro ao finalizar uso dos cupons");
 
-            localStorage.removeItem("cupomId");
+            localStorage.removeItem("cuponsAplicados");
         }
 
+
         localStorage.removeItem("carrinho");
+        localStorage.removeItem("cuponsAplicados");
         mostrarModalSucesso("Compra finalizada com sucesso!");
 
     } catch (error) {
         console.error("Erro ao finalizar compra:", error);
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
-        localStorage.removeItem("cupomId"); // mesmo se der erro, limpa
+        localStorage.removeItem("cuponsAplicados"); // mesmo se der erro, limpa
     }
 }
 
