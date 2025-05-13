@@ -215,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Cria um novo select de cartão (com botão cancelar)
+let id = 2;
 function criarSelectCartao() {
     const cartoesSelecionados = new Set(
         selectsCartoes.map(obj => obj.select.value).filter(v => v !== "")
@@ -226,11 +227,11 @@ function criarSelectCartao() {
 
     const cartaoGroup = document.createElement("div");
     cartaoGroup.className = "d-flex align-items-center mb-2 gap-2";
-
+    
     const novoSelect = document.createElement("select");
     novoSelect.className = "form-select";
     novoSelect.ariaLabel = "Cartão Adicional";
-
+    novoSelect.id = "cartao" + id++;
     const valorInput = document.createElement("input");
     valorInput.type = "number";
     valorInput.className = "form-control";
@@ -407,7 +408,7 @@ function atualizarCartoes(data) {
     const selectPrincipal = document.createElement("select");
     selectPrincipal.className = "form-select";
     selectPrincipal.ariaLabel = "Cartão Principal";
-
+    selectPrincipal.id = "cartao1";
     const valorInput = document.createElement("input");
     valorInput.type = "number";
     valorInput.className = "form-control";
