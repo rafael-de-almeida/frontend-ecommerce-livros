@@ -134,3 +134,48 @@ function mostrarMensagemSucesso() {
         msg.style.display = "none";
     }, 3000);
 }
+document.getElementById("sendMessage").addEventListener("click", async () => {
+    const userMessage = document.getElementById("userMessage").value.trim();
+    const chatbox = document.getElementById("chatbox");
+
+    if (!userMessage) return;
+
+    // Mostrar mensagem do usuário
+    const userDiv = document.createElement("div");
+    userDiv.innerHTML = `<strong>Você:</strong> ${userMessage}`;
+    chatbox.appendChild(userDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    // Limpar textarea
+    document.getElementById("userMessage").value = "";
+    
+    try {
+        const response = await fetch("http://localhost:8080/gemini/perguntar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                pergunta: userMessage,
+                usuarioId: id 
+            })
+        });
+
+        if (!response.ok) throw new Error("Erro na requisição");
+
+        const data = await response.json();
+
+        // Mostrar resposta da IA
+        const iaDiv = document.createElement("div");
+        iaDiv.innerHTML = `<strong>IA:</strong> ${data.resposta || "Não houve resposta."}`;
+        chatbox.appendChild(iaDiv);
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+    } catch (error) {
+        const errorDiv = document.createElement("div");
+        errorDiv.innerHTML = `<strong>Erro:</strong> ${error.message}`;
+        chatbox.appendChild(errorDiv);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+});
+
