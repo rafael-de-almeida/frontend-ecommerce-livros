@@ -142,22 +142,30 @@ document.getElementById("sendMessage").addEventListener("click", async () => {
 
     // Mostrar mensagem do usuário
     const userDiv = document.createElement("div");
+    userDiv.classList.add("message", "user");
     userDiv.innerHTML = `<strong>Você:</strong> ${userMessage}`;
     chatbox.appendChild(userDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
 
     // Limpar textarea
     document.getElementById("userMessage").value = "";
-    
+
+    // Criar a mensagem "IA está digitando..."
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("message", "ai");
+    typingDiv.innerHTML = `<em>Digitando<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></em>`;
+    chatbox.appendChild(typingDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
     try {
         const response = await fetch("http://localhost:8080/gemini/perguntar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 pergunta: userMessage,
-                usuarioId: id 
+                usuarioId: id
             })
         });
 
@@ -165,17 +173,23 @@ document.getElementById("sendMessage").addEventListener("click", async () => {
 
         const data = await response.json();
 
+        chatbox.removeChild(typingDiv);
+
         // Mostrar resposta da IA
         const iaDiv = document.createElement("div");
-        iaDiv.innerHTML = `<strong>IA:</strong> ${data.resposta || "Não houve resposta."}`;
+        iaDiv.classList.add("message", "ai");
+        iaDiv.innerHTML = `<strong>Chatbot:</strong> ${data.resposta || "Não houve resposta."}`;
         chatbox.appendChild(iaDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
 
     } catch (error) {
+        
+        chatbox.removeChild(typingDiv);
+
         const errorDiv = document.createElement("div");
+        errorDiv.classList.add("message", "ai");
         errorDiv.innerHTML = `<strong>Erro:</strong> ${error.message}`;
         chatbox.appendChild(errorDiv);
         chatbox.scrollTop = chatbox.scrollHeight;
     }
 });
-

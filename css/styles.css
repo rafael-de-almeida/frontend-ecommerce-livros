@@ -388,3 +388,60 @@ footer {
   max-height: 120px;
   object-fit: contain;
 }
+
+#chatbox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.message.user {
+    align-self: flex-end; 
+    background-color: #322e36; 
+    text-align: right;
+    color: #ffffff;
+}
+
+.message.ai {
+    align-self: flex-start;  
+    background-color: #e1e1ea; 
+    text-align: left;
+    color: #000;
+}
+
+.dot {
+  animation: blink 1.4s infinite;
+  font-weight: bold;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
