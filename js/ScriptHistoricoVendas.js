@@ -14,7 +14,7 @@ async function carregarDados() {
   }
 }
 
-function mostrarGrafico(pedidos) {
+function mostrarGrafico(pedidos, categoriaFiltro = 'todas') {
   const categoriasPorData = {};
 
   pedidos.forEach(pedido => {
@@ -22,6 +22,11 @@ function mostrarGrafico(pedidos) {
 
     pedido.livros.forEach(livro => {
       livro.categorias.forEach(categoria => {
+        // Se categoriaFiltro for diferente de 'todas', só inclui a categoria selecionada
+        if (categoriaFiltro !== 'todas' && categoria !== categoriaFiltro) {
+          return; // pula categorias diferentes
+        }
+
         if (!categoriasPorData[categoria]) {
           categoriasPorData[categoria] = {};
         }
@@ -66,6 +71,12 @@ function mostrarGrafico(pedidos) {
       fixedrange: true,
       autorange: true
     },
+    selectdirection: false,
+    clickmode: 'none',
+    legend: {
+      itemclick: false,
+      itemdoubleclick: false
+    },
     dragmode: false,
     plot_bgcolor: '#fff',
     paper_bgcolor: '#fff'
@@ -90,30 +101,30 @@ function filtrarPorData() {
   const categoriaSelecionada = document.getElementById('categoria').value;
 
   if (!dataInicio && !dataFim && (!categoriaSelecionada || categoriaSelecionada === 'todas')) {
-    mostrarGrafico(pedidosEntreguesGlobal);
+    mostrarGrafico(pedidosEntreguesGlobal, 'todas');
     return;
   }
 
-  // Formatar as datas do filtro no mesmo formato do banco: YYYY-MM-DD
-  const dataInicioStr = dataInicio ? dataInicio.replace(/-/g, '/') : null;
-  const dataFimStr = dataFim ? dataFim.replace(/-/g, '/') : null;
-
   const pedidosFiltrados = pedidosEntreguesGlobal.filter(pedido => {
-    const dataPedidoStr = pedido.data; // já vem como "YYYY/MM/DD"
+    const dataPedidoStr = pedido.data.split('T')[0];
 
     const dentroDoIntervalo =
-      (!dataInicioStr || dataPedidoStr >= dataInicioStr) &&
-      (!dataFimStr || dataPedidoStr <= dataFimStr);
+      (!dataInicio || dataPedidoStr >= dataInicio) &&
+      (!dataFim || dataPedidoStr <= dataFim);
 
     const contemCategoria =
       categoriaSelecionada === 'todas' ||
-      (pedido.categorias && pedido.categorias.includes(categoriaSelecionada));
+      pedido.livros.some(livro => livro.categorias.includes(categoriaSelecionada));
 
     return dentroDoIntervalo && contemCategoria;
   });
 
-  mostrarGrafico(pedidosFiltrados);
+  mostrarGrafico(pedidosFiltrados, categoriaSelecionada);
 }
+
+
+
+
 
 
 
