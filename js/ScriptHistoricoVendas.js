@@ -15,6 +15,7 @@ async function carregarDados() {
 function mostrarGrafico(pedidos) {
   const datas = pedidos.map(pedido => pedido.data);
   const valores = pedidos.map(pedido => pedido.valorTotal);
+  const numeros = pedidos.map(pedido => pedido.numeroPedido); 
 
   const trace = {
     x: datas,
@@ -23,7 +24,8 @@ function mostrarGrafico(pedidos) {
     mode: 'lines+markers',
     marker: { color: 'rgb(58, 71, 80)' },
     line: { shape: 'linear', color: 'rgb(58, 71, 80)' },
-    name: 'Pedidos Entregues'
+    name: 'Pedidos Entregues',
+    customdata: numeros 
   };
 
   const layout = {
@@ -45,11 +47,9 @@ function mostrarGrafico(pedidos) {
     const ponto = data.points[0];
     const dataSelecionada = ponto.x;
     const valorSelecionado = ponto.y;
+    const numeroSelecionado = ponto.customdata; 
 
-    const pedidoSelecionado = pedidos.find(pedido =>
-      pedido.data === dataSelecionada ||
-      new Date(pedido.data).toLocaleDateString() === new Date(dataSelecionada).toLocaleDateString()
-    );
+    const pedidoSelecionado = pedidos.find(pedido => pedido.numeroPedido === numeroSelecionado);
 
     document.getElementById('dataSelecionada').textContent = new Date(dataSelecionada).toLocaleDateString('pt-BR');
     document.getElementById('valorSelecionado').textContent = valorSelecionado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -65,6 +65,7 @@ function mostrarGrafico(pedidos) {
     }
   });
 }
+
 
 function filtrarPorData() {
   const dataInicio = document.getElementById('dataInicio').value;

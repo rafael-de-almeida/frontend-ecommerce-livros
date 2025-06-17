@@ -445,3 +445,71 @@ footer {
   }
 }
 
+/* Adicione este código ao seu arquivo css/styles.css */
+
+/* Estilo para o container dos filtros */
+.filter-card {
+  background-color: #f8f9fa; /* Um cinza bem claro */
+  border-radius: 0.75rem; /* Bordas mais arredondadas */
+  border: none; /* Remove a borda padrão */
+}
+
+/* Estiliza os campos de formulário para um visual mais limpo */
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  border: 1px solid #ced4da;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Efeito de foco para os inputs */
+.form-control:focus, .form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Deixa o botão de filtro mais destacado */
+#btnFiltrar {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+#btnFiltrar:hover {
+  transform: scale(1.02); /* Leve animação ao passar o mouse */
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+}
+
+/* Estilo base para os cards de detalhes */
+.details-card {
+  border-radius: 1rem; /* Bordas bem arredondadas */
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden; /* Garante que o conteúdo respeite as bordas */
+}
+
+/* Efeito de "elevar" o card ao passar o mouse */
+.details-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Estiliza o título dos cards */
+.details-card .card-title {
+  font-weight: 600;
+  color: #343a40;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.75rem;
+}
+
+/* Estilo para o valor em destaque no card de "Data e Valor" */
+#valorSelecionado {
+  color: #0d6efd; /* Azul primário do Bootstrap */
+}
+
+/* Estilo para o texto de placeholder nos cards */
+#dataSelecionada.text-muted,
+#livrosSelecionados.text-muted {
+  font-style: italic;
+  color: #6c757d !important; /* Garante a cor cinza */
+}
