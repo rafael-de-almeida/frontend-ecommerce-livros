@@ -7,87 +7,106 @@ async function carregarDados() {
 
     pedidosEntreguesGlobal = dados.filter(pedido => pedido.status === "ENTREGUE");
     mostrarGrafico(pedidosEntreguesGlobal);
+    console.log('Dados recebidos da API:', dados);
+    console.log('Pedidos ENTREGUE:', pedidosEntreguesGlobal);
   } catch (erro) {
     console.error('Erro ao carregar dados da API:', erro);
   }
 }
 
 function mostrarGrafico(pedidos) {
-  const datas = pedidos.map(pedido => pedido.data);
-  const valores = pedidos.map(pedido => pedido.valorTotal);
+  const categoriasPorData = {};
 
-  const trace = {
-    x: datas,
-    y: valores,
-    type: 'scatter',
-    mode: 'lines+markers',
-    marker: { color: 'rgb(58, 71, 80)' },
-    line: { shape: 'linear', color: 'rgb(58, 71, 80)' },
-    name: 'Pedidos Entregues'
-  };
+  pedidos.forEach(pedido => {
+    const data = new Date(pedido.data).toISOString().split('T')[0];
+
+    pedido.livros.forEach(livro => {
+      livro.categorias.forEach(categoria => {
+        if (!categoriasPorData[categoria]) {
+          categoriasPorData[categoria] = {};
+        }
+        if (!categoriasPorData[categoria][data]) {
+          categoriasPorData[categoria][data] = 0;
+        }
+        categoriasPorData[categoria][data] += livro.quantidade;
+      });
+    });
+  });
+
+  const traces = Object.entries(categoriasPorData).map(([categoria, valoresPorData]) => {
+    const datas = Object.keys(valoresPorData).sort();
+    const valores = datas.map(data => valoresPorData[data]);
+
+    return {
+      x: datas,
+      y: valores,
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: categoria,
+      line: { shape: 'linear' },
+      text: valores.map(v => `${v.toFixed(0)} itens`),
+      textposition: 'top center',
+      hoverinfo: 'x+y+text'
+    };
+  });
 
   const layout = {
-    title: 'Histórico de Vendas - Pedidos Entregues',
-    xaxis: { title: 'Data', type: 'date', fixedrange: true },
-    yaxis: { title: 'Valor Total (R$)', rangemode: 'tozero', fixedrange: true },
-    dragmode: false
+    title: { text: 'Itens Vendidos por Categoria', x: 0.5 },
+    margin: { l: 50, r: 30, b: 70, t: 50 },
+    xaxis: {
+      title: 'Data',
+      type: 'date',
+      tickformat: '%d/%m',
+      tickangle: -45,
+      fixedrange: true
+    },
+    yaxis: {
+      title: 'Quantidade de Itens',
+      rangemode: 'tozero',
+      fixedrange: true,
+      autorange: true
+    },
+    dragmode: false,
+    plot_bgcolor: '#fff',
+    paper_bgcolor: '#fff'
   };
 
   const config = {
     responsive: true,
-    displayModeBar: false,
+    displayModeBar: false
   };
 
-  Plotly.newPlot('graficoVendas', [trace], layout, config);
-
-  const grafico = document.getElementById('graficoVendas');
-  grafico.on('plotly_click', function(data) {
-    const ponto = data.points[0];
-    const dataSelecionada = ponto.x;
-    const valorSelecionado = ponto.y;
-
-    const pedidoSelecionado = pedidos.find(pedido =>
-      pedido.data === dataSelecionada ||
-      new Date(pedido.data).toLocaleDateString() === new Date(dataSelecionada).toLocaleDateString()
-    );
-
-    document.getElementById('dataSelecionada').textContent = new Date(dataSelecionada).toLocaleDateString('pt-BR');
-    document.getElementById('valorSelecionado').textContent = valorSelecionado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-    if (pedidoSelecionado) {
-      if (pedidoSelecionado.livros.length > 0) {
-        document.getElementById('livrosSelecionados').textContent = pedidoSelecionado.livros.join(', ');
-      } else {
-        document.getElementById('livrosSelecionados').textContent = 'Nenhum livro listado';
-      }
-    } else {
-      document.getElementById('livrosSelecionados').textContent = 'Pedido não encontrado';
-    }
-  });
+  Plotly.newPlot('graficoVendas', traces, layout, config);
 }
+
+
+
+
+
 
 function filtrarPorData() {
   const dataInicio = document.getElementById('dataInicio').value;
   const dataFim = document.getElementById('dataFim').value;
   const categoriaSelecionada = document.getElementById('categoria').value;
 
-  if (!dataInicio && !dataFim && !categoriaSelecionada) {
+  if (!dataInicio && !dataFim && (!categoriaSelecionada || categoriaSelecionada === 'todas')) {
     mostrarGrafico(pedidosEntreguesGlobal);
     return;
   }
 
-  const dataInicioObj = dataInicio ? new Date(dataInicio) : null;
-  const dataFimObj = dataFim ? new Date(dataFim) : null;
+  // Formatar as datas do filtro no mesmo formato do banco: YYYY-MM-DD
+  const dataInicioStr = dataInicio ? dataInicio.replace(/-/g, '/') : null;
+  const dataFimStr = dataFim ? dataFim.replace(/-/g, '/') : null;
 
   const pedidosFiltrados = pedidosEntreguesGlobal.filter(pedido => {
-    const dataPedido = new Date(pedido.data);
+    const dataPedidoStr = pedido.data; // já vem como "YYYY/MM/DD"
 
     const dentroDoIntervalo =
-      (!dataInicioObj || dataPedido >= dataInicioObj) &&
-      (!dataFimObj || dataPedido <= dataFimObj);
+      (!dataInicioStr || dataPedidoStr >= dataInicioStr) &&
+      (!dataFimStr || dataPedidoStr <= dataFimStr);
 
     const contemCategoria =
-      !categoriaSelecionada ||
+      categoriaSelecionada === 'todas' ||
       (pedido.categorias && pedido.categorias.includes(categoriaSelecionada));
 
     return dentroDoIntervalo && contemCategoria;
@@ -95,6 +114,8 @@ function filtrarPorData() {
 
   mostrarGrafico(pedidosFiltrados);
 }
+
+
 
 document.getElementById('btnFiltrar').addEventListener('click', filtrarPorData);
 
