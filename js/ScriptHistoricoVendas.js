@@ -5,9 +5,7 @@ async function carregarDados() {
     const resposta = await fetch('http://localhost:8080/site/ordens/resumo');
     const dados = await resposta.json();
 
-    // Filtrar apenas pedidos com status ENTREGUE
     pedidosEntreguesGlobal = dados.filter(pedido => pedido.status === "ENTREGUE");
-
     mostrarGrafico(pedidosEntreguesGlobal);
   } catch (erro) {
     console.error('Erro ao carregar dados da API:', erro);
@@ -42,14 +40,15 @@ function mostrarGrafico(pedidos) {
 
   Plotly.newPlot('graficoVendas', [trace], layout, config);
 
-  var grafico = document.getElementById('graficoVendas');
-  grafico.on('plotly_click', function(data){
-    var ponto = data.points[0];
-    var dataSelecionada = ponto.x;
-    var valorSelecionado = ponto.y;
+  const grafico = document.getElementById('graficoVendas');
+  grafico.on('plotly_click', function(data) {
+    const ponto = data.points[0];
+    const dataSelecionada = ponto.x;
+    const valorSelecionado = ponto.y;
 
     const pedidoSelecionado = pedidos.find(pedido =>
-      pedido.data === dataSelecionada || new Date(pedido.data).toLocaleDateString() === new Date(dataSelecionada).toLocaleDateString()
+      pedido.data === dataSelecionada ||
+      new Date(pedido.data).toLocaleDateString() === new Date(dataSelecionada).toLocaleDateString()
     );
 
     document.getElementById('dataSelecionada').textContent = new Date(dataSelecionada).toLocaleDateString('pt-BR');
@@ -68,10 +67,11 @@ function mostrarGrafico(pedidos) {
 }
 
 function filtrarPorData() {
-  const dataInicio = document.getElementById('dataInicio').value; // ex: "2025-06-01"
-  const dataFim = document.getElementById('dataFim').value;       // ex: "2025-06-30"
+  const dataInicio = document.getElementById('dataInicio').value;
+  const dataFim = document.getElementById('dataFim').value;
+  const categoriaSelecionada = document.getElementById('categoria').value;
 
-  if (!dataInicio && !dataFim) {
+  if (!dataInicio && !dataFim && !categoriaSelecionada) {
     mostrarGrafico(pedidosEntreguesGlobal);
     return;
   }
@@ -82,16 +82,20 @@ function filtrarPorData() {
   const pedidosFiltrados = pedidosEntreguesGlobal.filter(pedido => {
     const dataPedido = new Date(pedido.data);
 
-    if (dataInicioObj && dataPedido < dataInicioObj) return false;
-    if (dataFimObj && dataPedido > dataFimObj) return false;
+    const dentroDoIntervalo =
+      (!dataInicioObj || dataPedido >= dataInicioObj) &&
+      (!dataFimObj || dataPedido <= dataFimObj);
 
-    return true;
+    const contemCategoria =
+      !categoriaSelecionada ||
+      (pedido.categorias && pedido.categorias.includes(categoriaSelecionada));
+
+    return dentroDoIntervalo && contemCategoria;
   });
 
   mostrarGrafico(pedidosFiltrados);
 }
 
-// Evento do botão filtrar
 document.getElementById('btnFiltrar').addEventListener('click', filtrarPorData);
 
 carregarDados();
