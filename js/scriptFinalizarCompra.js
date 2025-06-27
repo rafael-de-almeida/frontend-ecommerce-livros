@@ -578,10 +578,10 @@ function mostrarModalSucesso(mensagem) {
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           // Descobrir o maior id
-          const maiorId = Math.max(...data.map(item => item.id));
+          const maiorId = Math.max(...data.map(item => item.ordemId));
   
           // Filtrar todos os pedidos com o maior id
-          const pedidosComMaiorId = data.filter(item => item.id === maiorId);
+          const pedidosComMaiorId = data.filter(item => item.ordemId === maiorId);
   
           // Montar a mensagem do recibo
           let recibo = `Pedido Nº ${maiorId}\n`;
