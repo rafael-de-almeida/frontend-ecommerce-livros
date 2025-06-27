@@ -2,7 +2,7 @@ let pedidosEntreguesGlobal = [];
 
 async function carregarDados() {
   try {
-    const resposta = await fetch('http://localhost:8080/site/ordens/resumo');
+    const resposta = await fetch('http://localhost:8080/site/resumo');
     const dados = await resposta.json();
 
     pedidosEntreguesGlobal = dados.filter(pedido => pedido.status === "ENTREGUE");

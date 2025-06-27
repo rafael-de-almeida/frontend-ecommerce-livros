@@ -59,7 +59,7 @@ async function buscarOrdens() {
 
       tr.innerHTML = `
         <td>${ordem.nomeCliente}</td>
-        <td>${ordem.livros.join(", ")}</td>
+        <td>${ordem.livros.map(l => l.titulo).join(", ")}</td>
         <td>R$ ${(ordem.valorTotal ?? 0).toFixed(2).replace(".", ",")}</td>
         <td>${ordem.data}</td>
         <td>${ordem.numeroPedido}</td>
