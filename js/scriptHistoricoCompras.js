@@ -10,24 +10,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return response.json();
     })
     .then(livros => {
+      console.log("Resposta do backend (array de livros com pedidos):", livros);
+
       if (!Array.isArray(livros)) {
         throw new Error("Resposta inválida do servidor");
       }
 
-      // 1. Agrupa livros pelo ID do pedido
+      // 1. Agrupa livros pelo ID do pedido (testando alguns nomes comuns)
       const pedidosMap = new Map();
 
       livros.forEach(livro => {
-        if (!pedidosMap.has(livro.id)) {
-          pedidosMap.set(livro.id, {
-            id: livro.id,
+        // Testa nomes diferentes para o id do pedido
+        const pedidoId = livro.id || livro.pedidoId || livro.ordemId || livro.orderId;
+
+        if (!pedidoId) {
+          console.warn("Livro sem ID de pedido identificado:", livro);
+          return;
+        }
+
+        if (!pedidosMap.has(pedidoId)) {
+          pedidosMap.set(pedidoId, {
+            id: pedidoId,
             data: livro.data,
             status: livro.status,
             precoTotal: livro.precoTotal,
             livros: []
           });
         }
-        pedidosMap.get(livro.id).livros.push(livro);
+        pedidosMap.get(pedidoId).livros.push(livro);
       });
 
       // 2. Cria cards para cada pedido agrupado
@@ -46,28 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `<button class="btn btn-danger mt-2" onclick="pedirDevolucao(${clienteId}, ${pedido.id})">Pedir Troca</button>`
           : "";
         
-          if (pedido.status === "TROCA AUTORIZADA") {
-            pegarcodigocupom(pedido.id).then(codigoCupom => {
-              card.innerHTML = `
-                <div class="card-body">
-                  <h5 class="card-title">Pedido #${pedido.id}</h5>
-                  <p class="card-text">Data: ${pedido.data}</p>
-                  <p class="card-text">Valor Total: R$ ${pedido.precoTotal.toFixed(2)}</p>
-                  <p class="card-text">Código do cupom: ${codigoCupom}</p>
-                  <span class="badge ${badgeClass}">${statusFormatado}</span>
-                  <ul class="mt-3">
-                    ${livrosHtml}
-                  </ul>
-                  ${botaoTroca}
-                </div>
-              `;
-              container.appendChild(card);
-            }).catch(error => {
-              console.error("Erro ao buscar código do cupom:", error);
-            });  
-          }
-          else{
+        if (pedido.status === "TROCA AUTORIZADA") {
+          pegarcodigocupom(pedido.id).then(codigoCupom => {
             card.innerHTML = `
+              <div class="card-body">
+                <h5 class="card-title">Pedido #${pedido.id}</h5>
+                <p class="card-text">Data: ${pedido.data}</p>
+                <p class="card-text">Valor Total: R$ ${pedido.precoTotal.toFixed(2)}</p>
+                <p class="card-text">Código do cupom: ${codigoCupom}</p>
+                <span class="badge ${badgeClass}">${statusFormatado}</span>
+                <ul class="mt-3">
+                  ${livrosHtml}
+                </ul>
+                ${botaoTroca}
+              </div>
+            `;
+            container.appendChild(card);
+          }).catch(error => {
+            console.error("Erro ao buscar código do cupom:", error);
+          });  
+        } else {
+          card.innerHTML = `
             <div class="card-body">
               <h5 class="card-title">Pedido #${pedido.id}</h5>
               <p class="card-text">Data: ${pedido.data}</p>
@@ -80,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           `;
 
-        container.appendChild(card);
+          container.appendChild(card);
         }
       });
     })
@@ -89,19 +98,20 @@ document.addEventListener("DOMContentLoaded", () => {
       container.innerHTML += `<p class="text-danger">Não foi possível carregar o histórico de pedidos.</p>`;
     });
 });
+
 function pegarcodigocupom(pedidoId) {
-return fetch(`http://localhost:8080/api/cupons/buscar-por-origem-troca/${pedidoId}`)
-.then(response => {
-  if (!response.ok) throw new Error("Erro ao buscar cupom.");
-  return response.json();
-})
-.then(data => {
-  const codigo = data.codigo;
-  console.log(codigo);
-  return codigo;
-});
-  
+  return fetch(`http://localhost:8080/api/cupons/buscar-por-origem-troca/${pedidoId}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Erro ao buscar cupom.");
+      return response.json();
+    })
+    .then(data => {
+      const codigo = data.codigo;
+      console.log(codigo);
+      return codigo;
+    });
 }
+
 // Define a cor da badge de status
 function statusCor(status) {
   switch (status) {
@@ -119,6 +129,8 @@ function statusCor(status) {
       return "bg-secondary";
   }
 }
+
+// Função pedirDevolucao e outras seguem iguais...
 
 function pedirDevolucao(clienteId, pedidoId) {
   const modalTroca = document.getElementById('modalTroca');

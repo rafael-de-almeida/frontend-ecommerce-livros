@@ -507,10 +507,12 @@ async function finalizarCompra() {
         preco: parseFloat(parseFloat(livro.LIV_VENDA).toFixed(2))
     }));
 
-    const pagamentos = selectsCartoes.map(({ select }) => ({
-        cartaoId: parseInt(select.value),
-        status: "EM PROCESSAMENTO"
-    }));
+   const pagamentos = selectsCartoes.map(({ select, input }) => ({
+    cartaoId: parseInt(select.value),
+    status: "EM PROCESSAMENTO",
+    valor: parseFloat(input.value)
+}));
+
 
     const dataAtual = new Date().toISOString().split("T")[0];
 
