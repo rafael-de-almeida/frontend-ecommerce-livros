@@ -1,5 +1,5 @@
 const urlParams = new URLSearchParams(window.location.search);
-let clienteId = urlParams.get('id'); // pega o id da URL
+let clienteId = urlParams.get('id'); 
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".container");
@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Resposta inválida do servidor");
       }
 
-      // 1. Agrupa livros pelo ID do pedido (testando alguns nomes comuns)
+   
       const pedidosMap = new Map();
 
       livros.forEach(livro => {
-        // Testa nomes diferentes para o id do pedido
+       
         const pedidoId = livro.id || livro.pedidoId || livro.ordemId || livro.orderId;
 
         if (!pedidoId) {
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pedidosMap.get(pedidoId).livros.push(livro);
       });
 
-      // 2. Cria cards para cada pedido agrupado
+   
       pedidosMap.forEach(pedido => {
         const card = document.createElement("div");
         card.classList.add("card", "mb-3");
@@ -112,7 +112,6 @@ function pegarcodigocupom(pedidoId) {
     });
 }
 
-// Define a cor da badge de status
 function statusCor(status) {
   switch (status) {
     case "ENTREGUE":
@@ -130,7 +129,7 @@ function statusCor(status) {
   }
 }
 
-// Função pedirDevolucao e outras seguem iguais...
+
 
 function pedirDevolucao(clienteId, pedidoId) {
   const modalTroca = document.getElementById('modalTroca');
@@ -156,10 +155,9 @@ function pedirDevolucao(clienteId, pedidoId) {
         return;
       }
 
-      // Ordenar livros por título (livroTitulo)
+      
       livros.sort((a, b) => a.livroTitulo.localeCompare(b.livroTitulo));
 
-      // Preencher o corpo do modal com os livros
       modalCorpoTroca.innerHTML = livros.map((livro, index) => `
         <div class="form-check mb-2">
           <input class="form-check-input me-2" type="checkbox" id="livroCheck${index}" 
@@ -172,7 +170,6 @@ function pedirDevolucao(clienteId, pedidoId) {
         </div>
       `).join("");
 
-      // Ativar/desativar campos de quantidade conforme checkbox
       setTimeout(() => {
         livros.forEach((_, index) => {
           const cb = document.getElementById(`livroCheck${index}`);

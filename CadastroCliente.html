@@ -55,16 +55,30 @@
           </div>
         </div>
 
+        
         <div class="row mt-3">
           <div class="col-md-6">
             <label for="senha" class="form-label">Senha</label>
             <input type="password" name="senha" id="senha" class="form-control" required>
+       
+            <div id="password-feedback" class="mt-2" style="display: none;">
+              <small>A senha deve conter:</small>
+              <ul class="list-unstyled small">
+                <li id="rule-length">❌ Pelo menos 8 caracteres</li>
+                <li id="rule-letter">❌ Pelo menos uma letra</li>
+                <li id="rule-number">❌ Pelo menos um número</li>
+                <li id="rule-special">❌ Pelo menos um caractere especial (@, #, $, etc.)</li>
+              </ul>
+            </div>
+          
+
           </div>
           <div class="col-md-6">
             <label for="confirmar_senha" class="form-label">Confirmar Senha</label>
             <input type="password" name="confirmar_senha" id="confirmar_senha" class="form-control" required>
           </div>
         </div>
+
 
         <div class="mb-3 mt-3">
           <label for="cpf" class="form-label">CPF</label>

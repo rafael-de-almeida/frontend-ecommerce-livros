@@ -22,9 +22,9 @@ function mostrarGrafico(pedidos, categoriaFiltro = 'todas') {
 
     pedido.livros.forEach(livro => {
       livro.categorias.forEach(categoria => {
-        // Se categoriaFiltro for diferente de 'todas', só inclui a categoria selecionada
+      
         if (categoriaFiltro !== 'todas' && categoria !== categoriaFiltro) {
-          return; // pula categorias diferentes
+          return; 
         }
 
         if (!categoriasPorData[categoria]) {

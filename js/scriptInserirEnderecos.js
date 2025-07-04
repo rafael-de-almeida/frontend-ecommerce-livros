@@ -10,7 +10,7 @@ function passarIdEndereco (){
 }
 
 async function postEndereco(event) {
-    event.preventDefault(); // Impede o envio tradicional do formulário
+    event.preventDefault(); 
 
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id'); 
@@ -25,7 +25,7 @@ async function postEndereco(event) {
     const postapiUrl = `http://localhost:8080/site/clientes/post/endereco?id=${id}`;
     console.log("POST URL:", postapiUrl);
 
-    // Captura dos dados do formulário
+  
     const cep = document.getElementById('cep').value;
     const rua = document.getElementById('rua').value;
     const numero = document.getElementById('numero').value;
@@ -35,13 +35,11 @@ async function postEndereco(event) {
     const estado = document.getElementById('estado').value;
     const status = document.getElementById('endereco-principal').checked ? 'principal' : 'secundario'; // Correção aqui
 
-    // Validação dos campos obrigatórios
     if (!cep || !rua || !numero || !complemento || !bairro || !cidade || !estado || !status) {
         alert('Por favor, preencha todos os campos.');
         return;
     }
 
-    // Organizando os dados a serem enviados
     const data = JSON.stringify({
         END_CEP: cep,
         END_RUA: rua,

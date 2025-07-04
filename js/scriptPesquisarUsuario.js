@@ -59,7 +59,7 @@ function populateTable(data) {
 
     clientesAtivos.forEach(item => {
         const row = document.createElement('tr');
-        row.setAttribute('data-id', item.cliId);  // Adiciona o atributo data-id à linha
+        row.setAttribute('data-id', item.cliId);  
         row.innerHTML = `
             <td>${item.CLI_NOME || 'N/A'}</td>
             <td>${item.CLI_GENERO || 'N/A'}</td>
@@ -89,21 +89,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function editarCliente(clienteId) {
-    // Verifique se o clienteId é válido
+   
     if (clienteId === undefined || clienteId === null) {
         console.error("ID do cliente não está definido.");
         alert("Erro: ID do cliente não encontrado.");
         return;
     }
-  // Verifique o id do cliente que está sendo passado
+  
   console.log("Redirecionando para AlterarDados.html?id=" + clienteId);
 
-  // Redireciona para a página de edição com o id como parâmetro na URL
+  
   window.location.href = `AlterarDados.html?id=${clienteId}`;
 }
 
 function excluirCliente(clienteId) {
-    // Verifique se o clienteId é válido
+    
     if (clienteId === undefined || clienteId === null) {
         console.error("ID do cliente não está definido.");
         alert("Erro: ID do cliente não encontrado.");
@@ -126,10 +126,10 @@ function excluirCliente(clienteId) {
 
         alert("Cliente excluído com sucesso!");
 
-        // Remover a linha da tabela diretamente
+     
         const row = document.querySelector(`tr[data-id="${clienteId}"]`);
         if (row) {
-            row.remove();  // Remove a linha da tabela
+            row.remove();  
         }
     })
     .catch(error => {

@@ -67,14 +67,14 @@ function preencherTabela(livros) {
   });
 }
 
-// Função para abrir o modal de entrada de estoque
+
 function abrirEntradaEstoque(idLivro) {
   document.getElementById('idLivroEstoque').value = idLivro;
   const modal = new bootstrap.Modal(document.getElementById('modalEntradaEstoque'));
   modal.show();
 }
 
-// Lógica para envio de dados no modal
+
 document.getElementById('formEstoque').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -98,7 +98,7 @@ document.getElementById('formEstoque').addEventListener('submit', async (e) => {
     alert("Estoque cadastrado com sucesso!");
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalEntradaEstoque'));
     modal.hide();
-    postLivros(); // Recarrega a lista de livros após cadastro do estoque
+    postLivros(); 
   } catch (err) {
     console.error(err);
     alert("Erro ao cadastrar estoque.");

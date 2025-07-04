@@ -1,5 +1,5 @@
-let cartoesDisponiveis = []; // Armazena os cartões do cliente
-let selectsCartoes = []; // Armazena todos os <select> dos cartões
+let cartoesDisponiveis = []; 
+let selectsCartoes = [];
 
 
 window.onload = function () {
@@ -18,7 +18,6 @@ window.onload = function () {
         }
     });
 
-    // Carrega e exibe os livros do carrinho
     exibirResumoCarrinho();
 };
 function exibirResumoCarrinho() {
@@ -76,10 +75,8 @@ function exibirResumoCarrinho() {
         container.appendChild(col);
     });
 
-    // Define frete
     let frete = enderecoValido ? (totalProdutos > limiteFreteGratis ? 0 : fretePadrao) : null;
 
-    // Cálculo de desconto com cupons
     let desconto = cuponsAplicados.reduce((total, cupom) => total + (cupom.valor || 0), 0);
 
     produtosResumo.textContent = `Produtos: R$${(totalProdutos / 100).toFixed(2).replace('.', ',')}`;
@@ -94,7 +91,6 @@ function exibirResumoCarrinho() {
         if (freteLabel) freteLabel.textContent = msg;
     }
 
-    // Mostrar cupons aplicados com botões para excluir
     if (cuponsAplicados.length > 0) {
         let html = `<strong>Descontos aplicados:</strong><br>`;
         cuponsAplicados.forEach((cupom, index) => {
@@ -117,23 +113,20 @@ function exibirResumoCarrinho() {
     quantidadeResumo.textContent = `Total de livros: ${totalQuantidadeLivros}`;
 }
 
-// Função para remover um cupom e atualizar o resumo
 function removerCupom(index) {
     const cupons = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
-    cupons.splice(index, 1); // remove o cupom pelo índice
+    cupons.splice(index, 1);
     localStorage.setItem('cuponsAplicados', JSON.stringify(cupons));
-    exibirResumoCarrinho(); // atualiza o resumo
+    exibirResumoCarrinho();
 }
-
-
-let cuponsAplicados = []; // lista de cupons aplicados
+let cuponsAplicados = [];
 let descontoCupom = 0;
 
 async function validarCupom() {
     const codigoCupom = document.getElementById("input-cupom").value.trim();
     const mensagem = document.getElementById("resumo-desconto");
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const id = parseInt(urlParams.get('id')); 
 
     if (!codigoCupom) {
         mensagem.textContent = "Digite um código de cupom.";
@@ -145,29 +138,30 @@ async function validarCupom() {
     try {
         const response = await fetch("http://localhost:8080/api/cupons/validar", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                codigo: codigoCupom,
-                clienteId: id
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ codigo: codigoCupom, clienteId: id })
         });
 
         const resultado = await response.json();
-
         if (!response.ok || !resultado.valido) {
             throw new Error(resultado.mensagem || "Cupom inválido.");
         }
 
-        // Captura preço total atual dos produtos
-        let precoTotalTexto = document.getElementById("resumo-produtos").textContent.trim();
-        let precoTotal = parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", ".")) * 100;
+        const precoTotalTexto = document.getElementById("resumo-produtos").textContent.trim();
+        const precoTotal = Math.round(parseFloat(precoTotalTexto.match(/[\d,.]+/)[0].replace(",", ".")) * 100);
 
-        // Recupera cupons já aplicados
         let cuponsAplicados = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
+        const valorTotalAntes = cuponsAplicados.reduce((soma, cupom) => soma + cupom.valor, 0);
 
-        // Verifica se o cupom já foi aplicado
+        if (valorTotalAntes >= precoTotal) {
+            const erroMsg = "O valor da compra já foi coberto. Não é possível adicionar mais cupons.";
+            alert(erroMsg);
+            mensagem.textContent = erroMsg;
+            mensagem.classList.remove("text-success");
+            mensagem.classList.add("text-danger");
+            return;
+        }
+        
         if (cuponsAplicados.some(c => c.codigo === codigoCupom)) {
             mensagem.textContent = `O cupom "${codigoCupom}" já foi aplicado.`;
             mensagem.classList.remove("text-success");
@@ -175,7 +169,6 @@ async function validarCupom() {
             return;
         }
 
-        // Verifica se já há um cupom promocional
         if (resultado.tipo === "PROMOCIONAL" && cuponsAplicados.some(c => c.tipo === "PROMOCIONAL")) {
             mensagem.textContent = "Você só pode aplicar um cupom promocional por compra.";
             mensagem.classList.remove("text-success");
@@ -183,43 +176,40 @@ async function validarCupom() {
             return;
         }
 
-        // Calcula valor do novo cupom
         let novoValorCupom = 0;
         if (resultado.tipo === "PROMOCIONAL") {
+           
             novoValorCupom = Math.round((parseFloat(resultado.valor) / 100) * precoTotal);
         } else if (resultado.tipo === "TROCA") {
+            
             novoValorCupom = Math.round(parseFloat(resultado.valor) * 100);
         }
 
-        // Soma total de cupons aplicados
-        let valorTotalCupons = cuponsAplicados.reduce((soma, cupom) => soma + cupom.valor, 0);
-
-        // Verifica se cupom excede valor da compra
-        if (valorTotalCupons + novoValorCupom > precoTotal) {
-            mensagem.textContent = "O valor total dos cupons não pode ultrapassar o valor da compra.";
-            mensagem.classList.remove("text-success");
-            mensagem.classList.add("text-danger");
-            return;
-        }
-
-        // Adiciona novo cupom
+     
         cuponsAplicados.push({
             id: resultado.cupomId,
             tipo: resultado.tipo,
             valor: novoValorCupom,
             codigo: codigoCupom
         });
-
         localStorage.setItem('cuponsAplicados', JSON.stringify(cuponsAplicados));
+        
+     
+        const valorTotalDepois = valorTotalAntes + novoValorCupom;
 
-        // Atualiza desconto total
-        descontoCupom = valorTotalCupons + novoValorCupom;
+        if (valorTotalAntes < precoTotal && valorTotalDepois > precoTotal) {
+            const valorTrocoEmCentavos = valorTotalDepois - precoTotal;
+            
+     
+            await gerarCupomDeTroco(id, valorTrocoEmCentavos);
+        }
 
         mensagem.textContent = "Cupom aplicado com sucesso!";
         mensagem.classList.remove("text-danger");
         mensagem.classList.add("text-success");
 
         exibirResumoCarrinho();
+
     } catch (error) {
         mensagem.textContent = error.message || "Erro ao validar o cupom.";
         mensagem.classList.remove("text-success");
@@ -227,20 +217,58 @@ async function validarCupom() {
         exibirResumoCarrinho();
     }
 }
+/**
+ * 
+ * @param {number} clienteId 
+ * @param {number} valorTrocoEmCentavos 
+ */
+async function gerarCupomDeTroco(clienteId, valorTrocoEmCentavos) {
+    
+    const valorEmReais = valorTrocoEmCentavos / 100;
 
+    try {
+        const response = await fetch("http://localhost:8080/api/cupons/gerar-troco", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                clienteId: clienteId,
+                valor: valorEmReais
+            })
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.mensagem || "Falha ao gerar o cupom de troco.");
+        }
 
+        const novoCupom = await response.json();
+        const valorFormatado = novoCupom.valor.toFixed(2).replace('.', ',');
+        
+        // Informa o usuário sobre o novo cupom gerado.
+        alert(
+            `O valor do seu cupom excedeu o total da compra.\n\n` +
+            `Um novo cupom de troca foi gerado para sua conta:\n` +
+            `Código: ${novoCupom.codigo}\n` +
+            `Valor: R$ ${valorFormatado}`
+        );
+
+    } catch (error) {
+        console.error("Erro ao gerar cupom de troco:", error);
+        alert("Houve um problema ao gerar seu cupom de troco. Por favor, entre em contato com o suporte.");
+    }
+}
 document.addEventListener("DOMContentLoaded", function () {
     const inputCupom = document.getElementById("input-cupom");
 
     inputCupom.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
-            event.preventDefault(); // evita enviar o formulário
+            event.preventDefault();
 
             const codigo = inputCupom.value.trim();
 
             if (codigo === "") {
-                // Só atualiza o resumo, sem alterar cupons
                 const mensagem = document.getElementById("resumo-desconto");
                 mensagem.textContent = "Digite um código de cupom.";
                 mensagem.classList.remove("text-success", "text-danger");
@@ -252,9 +280,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
-
-// Cria um novo select de cartão (com botão cancelar)
 let id = 2;
 function criarSelectCartao() {
     const cartoesSelecionados = new Set(
@@ -335,7 +360,11 @@ function validarPagamentoCartoes() {
     const totalTexto = document.getElementById("resumo-total").textContent;
     const totalCentavos = Number(totalTexto.replace(/\D/g, ''));
 
-    // VALIDAÇÃO DE ENDEREÇO
+
+    if (totalCentavos === 0) {
+        return true; 
+    }
+
     const enderecoSelecionado = document.getElementById('endereco-selecionado');
     if (!enderecoSelecionado || enderecoSelecionado.value === "") {
         alert("Selecione um endereço antes de finalizar a compra.");
@@ -350,17 +379,12 @@ function validarPagamentoCartoes() {
         }
 
         const valorReais = parseFloat(input.value.replace(",", "."));
-        if (isNaN(valorReais)) {
-            alert("Preencha todos os valores dos cartões.");
+        if (isNaN(valorReais) || valorReais <= 0) { 
+            alert("Preencha todos os valores dos cartões com um número positivo.");
             return false;
         }
 
         const valorCentavos = Math.round(valorReais * 100);
-       // if (valorCentavos < 1000) {
-       //     alert("Cada cartão deve pagar pelo menos R$10,00.");
-       //     return false;
-        //}
-
         soma += valorCentavos;
     }
 
@@ -371,11 +395,6 @@ function validarPagamentoCartoes() {
 
     return true;
 }
-
-// ============================
-//     BUSCA E ATUALIZAÇÃO
-// ============================
-
 function receberId() {
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id');
@@ -411,10 +430,8 @@ function atualizarEnderecos(data) {
         option.textContent = `${endereco.END_RUA}, ${endereco.END_NUMERO} - ${endereco.END_BAIRRO}, ${endereco.END_CIDADE} - ${endereco.END_ESTADO}`;
         select.appendChild(option);
     });
-
-    // Quando o usuário mudar o endereço, recalcula o resumo do carrinho com o novo frete
     select.addEventListener("change", () => {
-        exibirResumoCarrinho(); // Recalcula tudo, inclusive frete com base no endereço
+        exibirResumoCarrinho();
     });
 }
 
@@ -437,11 +454,10 @@ function atualizarCartoes(data) {
     cartoesDisponiveis = data.cartoes;
 
     const container = document.getElementById("cartoes-container");
-    container.innerHTML = ""; // Limpa tudo antes de recriar
+    container.innerHTML = "";
 
-    selectsCartoes = []; // Reinicia a lista de selects
+    selectsCartoes = []; 
 
-    // Cria o primeiro select (cartao1) com input e botão cancelar desabilitado
     const cartaoGroup = document.createElement("div");
     cartaoGroup.className = "d-flex align-items-center mb-2 gap-2";
 
@@ -461,7 +477,6 @@ function atualizarCartoes(data) {
         atualizarOpcoesCartoes();
     });
 
-    // botão cancelar desabilitado para o primeiro
     const btnFake = document.createElement("button");
     btnFake.textContent = "Principal";
     btnFake.className = "btn btn-outline-secondary btn-sm";
@@ -471,13 +486,9 @@ function atualizarCartoes(data) {
     cartaoGroup.appendChild(valorInput);
     cartaoGroup.appendChild(btnFake);
     container.appendChild(cartaoGroup);
-
-    // Agora atualiza opções normalmente
     atualizarOpcoesCartoes();
 }
 
-
-// Navegação
 function passarIdCartao() {
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id');
@@ -490,6 +501,7 @@ function passarIdEndereco() {
     window.location.href = `enderecos.html?id=${id}`;
 }
 async function finalizarCompra() {
+    
     if (!validarPagamentoCartoes()) return;
 
     const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
@@ -507,23 +519,29 @@ async function finalizarCompra() {
         preco: parseFloat(parseFloat(livro.LIV_VENDA).toFixed(2))
     }));
 
-   const pagamentos = selectsCartoes.map(({ select, input }) => ({
-    cartaoId: parseInt(select.value),
-    status: "EM PROCESSAMENTO",
-    valor: parseFloat(input.value)
-}));
+    
+    let pagamentos = []; 
+    let statusPedido = "PAGAMENTO APROVADO"; 
 
-
+    if (precoTotalCentavos > 0) {
+        statusPedido = "EM PROCESSAMENTO"; 
+        pagamentos = selectsCartoes.map(({ select, input }) => ({
+            cartaoId: parseInt(select.value),
+            status: "EM PROCESSAMENTO",
+            valor: parseFloat(input.value)
+        }));
+    }
+    
     const dataAtual = new Date().toISOString().split("T")[0];
 
     const body = {
         precoTotal: precoTotal,
-        status: "EM PROCESSAMENTO",
+        status: statusPedido, 
         data: dataAtual,
         clienteId: clienteId,
         enderecoId: enderecoSelecionado,
         livros: livros,
-        pagamentos: pagamentos
+        pagamentos: pagamentos 
     };
 
     try {
@@ -537,25 +555,20 @@ async function finalizarCompra() {
 
         if (!response.ok) throw new Error("Erro ao finalizar compra");
 
-        await response.text(); // você não usa `result.mensagem`, então pode até remover isso
+        await response.text(); 
 
         const cuponsAplicados = JSON.parse(localStorage.getItem("cuponsAplicados")) || [];
         const cuponsIds = cuponsAplicados.map(cupom => cupom.id).filter(id => id !== undefined);
 
         if (cuponsIds.length > 0) {
-        const cupomResponse = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ cuponsIds: cuponsIds })
-        });
+            const cupomResponse = await fetch("http://localhost:8080/api/cupons/finalizar-compra", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cuponsIds: cuponsIds })
+            });
 
             if (!cupomResponse.ok) throw new Error("Erro ao finalizar uso dos cupons");
-
-            localStorage.removeItem("cuponsAplicados");
         }
-
 
         localStorage.removeItem("carrinho");
         localStorage.removeItem("cuponsAplicados");
@@ -564,7 +577,7 @@ async function finalizarCompra() {
     } catch (error) {
         console.error("Erro ao finalizar compra:", error);
         alert("Houve um problema ao finalizar a compra. Tente novamente.");
-        localStorage.removeItem("cuponsAplicados"); // mesmo se der erro, limpa
+        localStorage.removeItem("cuponsAplicados");
     }
 }
 
@@ -579,13 +592,8 @@ function mostrarModalSucesso(mensagem) {
       })
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Descobrir o maior id
           const maiorId = Math.max(...data.map(item => item.ordemId));
-  
-          // Filtrar todos os pedidos com o maior id
           const pedidosComMaiorId = data.filter(item => item.ordemId === maiorId);
-  
-          // Montar a mensagem do recibo
           let recibo = `Pedido Nº ${maiorId}\n`;
           recibo += `Data: ${pedidosComMaiorId[0].data}\n`;
           recibo += `Status: ${pedidosComMaiorId[0].status}\n`;
@@ -593,7 +601,6 @@ function mostrarModalSucesso(mensagem) {
           pedidosComMaiorId.forEach(item => {
             recibo += `- ${item.titulo} (Qtd: ${item.quantidade}) - R$ ${item.preco.toFixed(2)}\n`;
           });
-  
           recibo += `\nTotal: R$ ${pedidosComMaiorId[0].precoTotal.toFixed(2)}`;
           recibo += `\n\nVeja o status da sua compra pelo historico de compras!`;
           alert(mensagem);
@@ -608,11 +615,9 @@ function mostrarModalSucesso(mensagem) {
         alert("Erro ao buscar o pedido.");
       });
   }
-
   function passarIdHistoricoCompras() {
     window.location.href = `historicoCompras.html?id=2`;
 }
-
 function passarIdTelaInicial() {
     window.location.href = `telaInicial.html?id=2`;
 }

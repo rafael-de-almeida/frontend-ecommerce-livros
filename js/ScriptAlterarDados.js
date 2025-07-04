@@ -1,5 +1,5 @@
 const getApiUrl = 'http://localhost:8080/site/clientes/get'; 
-const updateApiUrl = 'http://localhost:8080/site/clientes/put'; // URL para atualização
+const updateApiUrl = 'http://localhost:8080/site/clientes/put'; 
 
 function passarIdCartao (){
     const urlParams = new URLSearchParams(window.location.search);
@@ -12,7 +12,7 @@ function passarIdEndereco (){
     window.location.href = `enderecos.html?id=${id}`
 }
 
-// Função para carregar dados do cliente (ao carregar a página)
+
 async function carregarDadosCliente() {
     const urlParams = new URLSearchParams(window.location.search);
     let id = urlParams.get('id');
@@ -23,7 +23,7 @@ async function carregarDadosCliente() {
     }
 
     console.log("ID capturado:", id);
-    localStorage.setItem('clienteId', id); // Salva o ID no localStorage
+    localStorage.setItem('clienteId', id);
     
     const apiUrl = `${getApiUrl}/${id}`;
 
@@ -42,7 +42,6 @@ async function carregarDadosCliente() {
 }
 
 
-// Função para preencher o formulário com os dados do cliente
 function preencherFormulario(cliente) {
     document.getElementById('nome').value = cliente.CLI_NOME || '';
     document.getElementById('genero').value = cliente.CLI_GENERO || '';
@@ -54,7 +53,6 @@ function preencherFormulario(cliente) {
     document.getElementById('status').value = cliente.CLI_STATUS || '';
 }
 
-// Função para atualizar os dados do cliente (ao submeter o formulário)
 async function atualizarCliente(event) {
     event.preventDefault();
 
@@ -76,7 +74,7 @@ async function atualizarCliente(event) {
     };
 
     try {
-        const apiUrl = `${updateApiUrl}?id=${id}`; // Certifique-se de que o ID está na URL
+        const apiUrl = `${updateApiUrl}?id=${id}`; 
 
         const response = await fetch(apiUrl, {
             method: 'PUT',
@@ -97,8 +95,6 @@ async function atualizarCliente(event) {
     }
 }
 
-// Adiciona o evento para o formulário de atualização
 document.getElementById('form-cliente').addEventListener('submit', atualizarCliente);
 
-// Carregar dados do cliente ao carregar a página
 window.addEventListener('DOMContentLoaded', carregarDadosCliente);

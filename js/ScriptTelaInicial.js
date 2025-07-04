@@ -1,7 +1,7 @@
 let livrosOriginais = [];
 let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 const urlParams = new URLSearchParams(window.location.search);
-let id = urlParams.get('id'); // pega o id da URL
+let id = urlParams.get('id'); 
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchLivros();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const filtrados = livrosOriginais.filter(livro =>
             livro.livTitulo.toLowerCase().includes(termo)
         );
-        renderLivros(filtrados, id); // <- id mantido
+        renderLivros(filtrados, id); 
     });
 });
 
@@ -140,17 +140,16 @@ document.getElementById("sendMessage").addEventListener("click", async () => {
 
     if (!userMessage) return;
 
-    // Mostrar mensagem do usuário
+    
     const userDiv = document.createElement("div");
     userDiv.classList.add("message", "user");
     userDiv.innerHTML = `<strong>Você:</strong> ${userMessage}`;
     chatbox.appendChild(userDiv);
     chatbox.scrollTop = chatbox.scrollHeight;
 
-    // Limpar textarea
+   
     document.getElementById("userMessage").value = "";
 
-    // Criar a mensagem "IA está digitando..."
     const typingDiv = document.createElement("div");
     typingDiv.classList.add("message", "ai");
     typingDiv.innerHTML = `<em>Digitando<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></em>`;
@@ -175,7 +174,6 @@ document.getElementById("sendMessage").addEventListener("click", async () => {
 
         chatbox.removeChild(typingDiv);
 
-        // Mostrar resposta da IA
         const iaDiv = document.createElement("div");
         iaDiv.classList.add("message", "ai");
         iaDiv.innerHTML = `<strong>Chatbot:</strong> ${data.resposta || "Não houve resposta."}`;
