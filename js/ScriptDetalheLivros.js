@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("livroPreco").textContent = 
                 livro.LIV_VENDA ? `R$ ${parseFloat(livro.LIV_VENDA).toFixed(2).replace('.', ',')}` : "Preço indisponível";
 
-            // Botões programados
+          
             const btnComprarAgora = document.querySelector(".btn.btn-success");
             const btnAdicionarCarrinho = document.querySelector(".btn.btn-outline-primary");
 

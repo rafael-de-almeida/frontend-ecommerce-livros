@@ -123,6 +123,9 @@ function passarIdTelaInicial(){
     window.location.href = `telaInicial.html?id=${id}`;
 }
 
+function passarIdMeusCupons() {
+    window.location.href = `meusCupons.html?id=${clienteId}`;
+}
 function passarIdCarrinho() {
     window.location.href = `Carrinho.html?id=${id}`;
 }
