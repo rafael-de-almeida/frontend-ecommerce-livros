@@ -23,6 +23,7 @@
         <ul class="navbar-nav me-auto mt-2 mt-lg-0">
           <li class="nav-item active"><a class="nav-link" style="cursor: pointer;" onclick="passarIdTelaInicial()">Tela Inicial</a></li>
           <li class="nav-item active"><a class="nav-link" style="cursor: pointer;" onclick="passarIdHistoricoCompras()">Minhas compras</a></li>
+          <li class="nav-item active"><a class="nav-link" style="cursor: pointer;" onclick="passarIdMeusCupons()"><b>Meus Cupons</b></a></li>
       </ul>
         <div class="dropdown d-flex align-items-center">
           <img src="assets/premium_photo-1689539137236-b68e436248de.jpeg" alt="Imagem" class="rounded-circle me-2" width="40" height="40">
@@ -68,10 +69,16 @@
       
 <div class="mb-4">
   <h3>Aplicar Cupom</h3>
-  <div class="input-group mb-2">
+  
+  <!-- O input e o botão continuam agrupados -->
+  <div class="input-group">
     <input type="text" class="form-control" id="input-cupom" placeholder="Digite o código do cupom">
     <button type="button" class="btn btn-primary" id="btn-aplicar-cupom" onclick="validarCupom()">Aplicar Cupom</button>
   </div>
+
+  <!-- A mensagem de status agora fica logo abaixo do grupo, o que é semanticamente e visualmente melhor -->
+  <div id="cupom-mensagem-status" class="mt-2 fw-bold"></div>
+
 </div>
 
       <div class="mb-4">
@@ -102,7 +109,7 @@
           <div class="card p-3 shadow-sm rounded resumo-box bg-light">
             <p class="mb-1 fs-5 text-secondary" id="resumo-produtos"></p>
             <p class="mb-1 fs-5 text-secondary" id="resumo-frete"></p>
-            <p class="mb-1 fs-5 text-secondary" id="resumo-desconto"></p>
+            <p id="resumo-desconto">Desconto(Cupom): R$0,00</p>
             <div id="resumo-cupons-aplicados" class="mt-2"></div> 
             <p class="mb-1 fs-5 text-dark" id="resumo-total"></p>
             <p class="mt-2">

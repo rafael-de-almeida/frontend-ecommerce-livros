@@ -124,14 +124,17 @@ let descontoCupom = 0;
 
 async function validarCupom() {
     const codigoCupom = document.getElementById("input-cupom").value.trim();
-    const mensagem = document.getElementById("resumo-desconto");
+    
+    // << MUDANÇA 1: A variável 'mensagem' agora aponta para o novo <div> de status.
+    const mensagem = document.getElementById("cupom-mensagem-status"); 
+    
     const urlParams = new URLSearchParams(window.location.search);
     const id = parseInt(urlParams.get('id')); 
 
     if (!codigoCupom) {
         mensagem.textContent = "Digite um código de cupom.";
-        mensagem.classList.remove("text-success");
-        mensagem.classList.add("text-danger");
+        // Adicionando classes de estilo para a mensagem de erro.
+        mensagem.className = "mt-2 fw-bold text-danger";
         return;
     }
 
@@ -153,39 +156,34 @@ async function validarCupom() {
         let cuponsAplicados = JSON.parse(localStorage.getItem('cuponsAplicados')) || [];
         const valorTotalAntes = cuponsAplicados.reduce((soma, cupom) => soma + cupom.valor, 0);
 
+        // A lógica de validação de regras de negócio permanece a mesma.
+        // As mensagens de erro agora são exibidas no elemento correto.
         if (valorTotalAntes >= precoTotal) {
             const erroMsg = "O valor da compra já foi coberto. Não é possível adicionar mais cupons.";
-            alert(erroMsg);
             mensagem.textContent = erroMsg;
-            mensagem.classList.remove("text-success");
-            mensagem.classList.add("text-danger");
+            mensagem.className = "mt-2 fw-bold text-danger";
             return;
         }
         
         if (cuponsAplicados.some(c => c.codigo === codigoCupom)) {
             mensagem.textContent = `O cupom "${codigoCupom}" já foi aplicado.`;
-            mensagem.classList.remove("text-success");
-            mensagem.classList.add("text-danger");
+            mensagem.className = "mt-2 fw-bold text-danger";
             return;
         }
 
         if (resultado.tipo === "PROMOCIONAL" && cuponsAplicados.some(c => c.tipo === "PROMOCIONAL")) {
             mensagem.textContent = "Você só pode aplicar um cupom promocional por compra.";
-            mensagem.classList.remove("text-success");
-            mensagem.classList.add("text-danger");
+            mensagem.className = "mt-2 fw-bold text-danger";
             return;
         }
 
         let novoValorCupom = 0;
         if (resultado.tipo === "PROMOCIONAL") {
-           
             novoValorCupom = Math.round((parseFloat(resultado.valor) / 100) * precoTotal);
         } else if (resultado.tipo === "TROCA") {
-            
             novoValorCupom = Math.round(parseFloat(resultado.valor) * 100);
         }
 
-     
         cuponsAplicados.push({
             id: resultado.cupomId,
             tipo: resultado.tipo,
@@ -194,27 +192,28 @@ async function validarCupom() {
         });
         localStorage.setItem('cuponsAplicados', JSON.stringify(cuponsAplicados));
         
-     
         const valorTotalDepois = valorTotalAntes + novoValorCupom;
 
         if (valorTotalAntes < precoTotal && valorTotalDepois > precoTotal) {
             const valorTrocoEmCentavos = valorTotalDepois - precoTotal;
-            
-     
             await gerarCupomDeTroco(id, valorTrocoEmCentavos);
         }
 
+        // Exibe a mensagem de sucesso no elemento de status.
         mensagem.textContent = "Cupom aplicado com sucesso!";
-        mensagem.classList.remove("text-danger");
-        mensagem.classList.add("text-success");
+        mensagem.className = "mt-2 fw-bold text-success";
 
+        // Atualiza o resumo do carrinho (que está em outro elemento e não apagará a mensagem de sucesso).
         exibirResumoCarrinho();
 
     } catch (error) {
+        // Exibe a mensagem de erro no elemento de status.
         mensagem.textContent = error.message || "Erro ao validar o cupom.";
-        mensagem.classList.remove("text-success");
-        mensagem.classList.add("text-danger");
-        exibirResumoCarrinho();
+        mensagem.className = "mt-2 fw-bold text-danger";
+        
+        // << MUDANÇA 2: Removemos a chamada 'exibirResumoCarrinho()' do bloco de erro.
+        // Não há necessidade de atualizar o resumo se o cupom falhou, e isso
+        // garantia que a mensagem de erro não fosse apagada.
     }
 }
 /**
