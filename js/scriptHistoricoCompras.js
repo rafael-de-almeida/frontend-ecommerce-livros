@@ -259,3 +259,6 @@ function passarIdEndereco() {
 function passarIdTelaInicial() {
   window.location.href = `telaInicial.html?id=${clienteId}`;
 }
+function passarIdMeusCupons() {
+    window.location.href = `meusCupons.html?id=${clienteId}`;
+}

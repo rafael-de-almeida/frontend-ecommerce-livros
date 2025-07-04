@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF--8">
   <title>Livros e Estoque</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,14 +10,14 @@
   <link rel="stylesheet" href="css/styles.css">
 
   <style>
-    /* Garante que a tabela ocupe toda a largura disponível */
+ 
 .table {
   width: 100%;
   table-layout: fixed;
   word-wrap: break-word;
 }
 
-/* Centraliza o conteúdo das células */
+
 .table th,
 .table td {
   text-align: center;
@@ -25,25 +25,22 @@
   font-size: 0.9rem;
 }
 
-/* Reduz o padding para melhor aproveitamento do espaço */
 .table th,
 .table td {
   padding: 0.5rem;
 }
 
-/* Define largura mínima para colunas críticas */
-.table th:nth-child(4), /* Título */
-.table td:nth-child(4) {
+.table th:nth-child(3), /* Título */
+.table td:nth-child(3) {
   min-width: 120px;
 }
 
-/* Ajusta a coluna de ações */
 .table th:last-child,
 .table td:last-child {
   width: 90px;
 }
 
-/* Deixa o cabeçalho com destaque */
+
 .table thead {
   background-color: #f8f9fa;
   font-weight: bold;
@@ -51,18 +48,18 @@
 
 .table th,
 .table td {
-  white-space: nowrap;     /* Impede quebra de linha */
-  overflow: hidden;        /* Oculta texto que passar do limite */
-  text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+  white-space: nowrap;     
+  overflow: hidden;        
+  text-overflow: ellipsis; 
   vertical-align: middle;
   text-align: center;
   padding: 0.5rem;
 }
 
-/* Se quiser permitir quebra controlada em colunas maiores como "título": */
-.table th:nth-child(4),
-.table td:nth-child(4) {
-  white-space: normal; /* Permite quebra de linha */
+
+.table th:nth-child(3), /* Título */
+.table td:nth-child(3) {
+  white-space: normal; 
   word-break: break-word;
 }
 
@@ -99,10 +96,10 @@
     </div>
   </nav>
 
-  <!-- Conteúdo Principal -->
+ 
   <div class="container mt-4">
     <div class="row">
-      <!-- Filtro à Esquerda -->
+     
       <div class="col-md-4">
         <div class="card p-4 mb-4">
           <h4 class="mb-3">Filtrar Livros</h4>
@@ -114,10 +111,6 @@
             <div class="mb-3">
               <label for="autor" class="form-label">Autor</label>
               <input type="text" id="autor" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label for="categoria" class="form-label">Categoria</label>
-              <input type="text" id="categoria" class="form-control">
             </div>
             <div class="mb-3">
               <label for="ano" class="form-label">Ano</label>
@@ -136,13 +129,11 @@
             <thead>
               <tr>
                 <th>Autor</th>
-                <th>Categoria</th>
                 <th>Ano</th>
                 <th>Título</th>
                 <th>Editora</th>
                 <th>ISBN</th>
                 <th>Páginas</th>
-                <th>Cód. Barras</th>
                 <th>Qtd. Estoque</th>
                 <th>Ações</th>
               </tr>
@@ -196,9 +187,9 @@
     async function postLivros(event) {
       if (event) event.preventDefault();
 
+      // Filtros sem o campo 'categoria'
       const filtros = {
         autor: document.getElementById('autor').value.trim(),
-        categoria: document.getElementById('categoria').value.trim(),
         ano: document.getElementById('ano').value.trim(),
         titulo: document.getElementById('titulo').value.trim()
       };
@@ -226,15 +217,14 @@
 
       livros.forEach(livro => {
         const linha = document.createElement('tr');
+        // Linha da tabela sem os campos 'categoria' e 'cód. barras'
         linha.innerHTML = `
           <td>${livro.LIV_AUTOR || ''}</td>
-          <td>${livro.livCategoria || ''}</td>
           <td>${livro.livAno || ''}</td>
           <td>${livro.livTitulo || ''}</td>
           <td>${livro.LIV_EDITORA || ''}</td>
           <td>${livro.LIV_ISBN || ''}</td>
           <td>${livro.LIV_QTD_PAGINAS || ''}</td>
-          <td>${livro.liv_cod_barras || ''}</td>
           <td id="qtd-${livro.livId}">Carregando...</td>
           <td><button class="btn btn-sm btn-primary" onclick="abrirEntradaEstoque(${livro.livId})">Entrada</button></td>
         `;
